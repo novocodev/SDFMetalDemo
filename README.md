@@ -10,11 +10,13 @@ And the [hg_sdf](http://mercury.sexy/hg_sdf/) Signed distance library by mercury
 Signed Distance Bounds demos are written as static GPU shaders, uniforms can be passed in to modify some parameters.
 By using static code shader compilers can apply maximum optimisation, but are limited in usability as general 3D renderes.
 
-## Features
+## SP Features
 
-SP allows a scene to be dynamically created and updated
+Allows a scene to be dynamically created and updated
 
 Scenes are continuousy compiled in a background thread and replace the dynamic scene as soon as possible
+
+Supports picking using the same Metal shader as the view renderer 
 
 Supports iOS, tvOS and OSX
 
