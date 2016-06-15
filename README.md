@@ -1,5 +1,5 @@
-# spatial-photonics (SP)
-A Signed Distance Bounds 3D renderer using Apple's Metal compute pipeline
+# Spatial Photonics (SP)
+A Signed Distance Bounds dynamic 3D rendering engine using Apple's Metal compute pipeline
 
 Inspired by IQ's Signed Distance Bounds [demo on shadertoy](https://www.shadertoy.com/view/Xds3zN)
 
@@ -7,8 +7,13 @@ And the [hg_sdf](http://mercury.sexy/hg_sdf/) Signed distance library by mercury
 
 ## Intro
 
-Signed Distance Bounds demos are written as static GPU shaders, uniforms can be passed in to modify some parameters.
-By using static code shader compilers can apply maximum optimisation, but are limited in usability as general 3D renderes.
+SP is a 3d rendering engine initially focused on immersive 3D User Interfaces for use in VR, AR and MR.
+
+Rather than use a triangle mesh based renderer SP uses Signed distance function (SDF) renderer.
+
+SDF renderers use mathmatical functions to define serfaces, they do not use pre-created model assets so they are more flexible.
+
+
 
 ## SP Features
 
