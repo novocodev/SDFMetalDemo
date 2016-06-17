@@ -26,7 +26,7 @@ Comes with a simple demos
 
 Works on iOS, tvOS and OSX
 
-## Target Features
+## Roadmap Features
 
 Support more geometric primitives
 
