@@ -15,16 +15,30 @@ SDF renderers use mathmatical functions to define serfaces, they do not use pre-
 
 
 
-## SP Features
+## Current Features
 
-Allows a scene to be dynamically created and updated
+Supports dynamic scenes
 
-Scenes are continuousy compiled in a background thread and replace the dynamic scene as soon as possible
+Metal haders are re-compiled online in the background when structural changes to the scene occur
 
-Supports picking using the same Metal shader as the view renderer 
+Supports picking using the same shader as the scene renderer
 
-Supports iOS, tvOS and OSX
+Comes with a simple demos
 
+Works on iOS, tvOS and OSX
 
+## Target Features
 
+Support more geometric primitives
 
+Better support for materials
+
+Better shader performance
+
+Support for animating object properties
+
+Support for more camera projectsions
+
+## Known Issues
+
+When a shader is re-compiled previous versions are not garbage collected on iOS
