@@ -18,7 +18,7 @@ And the [hg_sdf](http://mercury.sexy/hg_sdf/) Signed distance library by mercury
 
 Supports dynamic scenes
 
-Metal haders are re-compiled online in the background when structural changes to the scene occur
+Metal shaders are re-compiled online in the background when structural changes to the scene occur
 
 Supports picking using the same shader as the scene renderer
 
