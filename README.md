@@ -36,7 +36,10 @@ Better shader performance
 
 Support for animating object properties
 
-Support for more camera projectsions
+Support for camera projections other than perspective
+
+Support client provided distance functions
+
 
 ## Known Issues
 
