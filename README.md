@@ -19,3 +19,4 @@ When a shader is re-compiled previous versions are not garbage collected on iOS
 
 ## License
 
+[Apache License Version 2.0, January 2004](http://www.apache.org/licenses/)
