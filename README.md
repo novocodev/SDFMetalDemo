@@ -3,10 +3,6 @@ A Signed Distance Function Demo using Apple's Metal compute shaders
 
 ## Intro
 
-SP is a 3d rendering engine initially focused on immersive 3D User Interfaces for use in VR, AR and MR.
-
-Rather than use a triangle mesh based renderer SP uses Signed distance function (SDF) renderer.
-
 SDF renderers use mathmatical functions to define serfaces, they do not use pre-created model assets.
 
 ## SDF Refereneces
