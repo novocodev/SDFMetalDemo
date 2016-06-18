@@ -1,0 +1,19 @@
+#ifndef __SPATIALPHOTONICS_TYPES
+#define __SPATIALPHOTONICS_TYPES
+
+#include <metal_stdlib>
+
+#ifndef __INLINE__
+#warning __INLINE__ is not defined
+#define __INLINE__ inline __attribute__((__always_inline__))
+#endif
+
+#ifndef SPATIALPHOTONICS_FUNC
+#warning SPATIALPHOTONICS_FUNC is not defined
+#define SPATIALPHOTONICS_FUNC inline __INLINE__
+#endif
+
+#define SPATIALPHOTONICS_NAMESPACE_BEGIN namespace spatialphotonics {
+#define SPATIALPHOTONICS_NAMESPACE_END }
+
+#endif /* __SPATIALPHOTONICS_TYPES */
