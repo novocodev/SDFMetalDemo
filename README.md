@@ -1,5 +1,5 @@
-# Spatial Photonics (SP)
-A Signed Distance Bounds dynamic 3D rendering engine using Apple's Metal compute shaders
+# SDF Metal Demo
+A Signed Distance Function Demo using Apple's Metal compute shaders
 
 ## Intro
 
@@ -17,34 +17,9 @@ And the [hg_sdf](http://mercury.sexy/hg_sdf/) Signed distance library by mercury
 
 Wikipedias [SDF page](https://en.wikipedia.org/wiki/Signed_distance_function)
 
-## Current Features
-
-Supports dynamic scenes
-
-Metal shaders are re-compiled online in the background when structural changes to the scene occur
-
-Supports picking using the same shader as the scene renderer
-
-Comes with a simple demos
-
-Works on iOS, tvOS and OSX
-
-## Roadmap Features
-
-Support more geometric primitives
-
-Better support for materials
-
-Better shader performance
-
-Support for animating object properties
-
-Support for camera projections other than perspective
-
-Support client provided distance functions
-
-Swift port
-
 ## Known Issues
 
 When a shader is re-compiled previous versions are not garbage collected on iOS
+
+## License
+
