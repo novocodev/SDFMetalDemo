@@ -1,10 +1,3 @@
-//
-//  SceneManager.h
-//  voĉo
-//
-//  Created by Andrew Reslan on 23/05/2016.
-//  Copyright © 2016 Novoĉo. All rights reserved.
-//
 
 #ifndef SceneManager_h
 #define SceneManager_h

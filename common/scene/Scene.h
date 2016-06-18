@@ -1,10 +1,4 @@
-//
-//  Scene.h
-//  voĉo
-//
-//  Created by Andrew Reslan on 23/05/2016.
-//  Copyright © 2016 Novoĉo. All rights reserved.
-//
+
 #ifndef Scene_h
 #define Scene_h
 

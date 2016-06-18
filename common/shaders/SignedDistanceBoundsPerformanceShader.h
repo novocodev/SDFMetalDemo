@@ -1,10 +1,3 @@
-//
-//  SignedDistanceBoundsPerformanceShader.h
-//  voĉo
-//
-//  Created by Andrew Reslan on 13/05/2016.
-//  Copyright © 2016 Novoĉo. All rights reserved.
-//
 
 @import Metal;
 @import CoreGraphics;

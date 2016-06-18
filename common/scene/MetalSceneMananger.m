@@ -37,7 +37,7 @@
 		
 		[self setupShader];
         
-        NSString *pathToTemplate = [[NSBundle mainBundle] pathForResource:@"static-sdb-template-metal-shader" ofType:@"tpl"];
+        NSString *pathToTemplate = [[NSBundle mainBundle] pathForResource:@"static-sdf-template-metal-shader" ofType:@"tpl"];
         
         _template = [[NSString alloc] initWithData:[NSData dataWithContentsOfFile:pathToTemplate] encoding:NSUTF8StringEncoding];
 	}
