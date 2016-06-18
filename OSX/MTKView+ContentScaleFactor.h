@@ -1,8 +1,3 @@
-//
-//  NSView+ContentScaleFactor.h
-//  voĉo
-//  Copyright © 2016 Novoĉo. All rights reserved.
-//
 
 #ifdef __APPLE__
 

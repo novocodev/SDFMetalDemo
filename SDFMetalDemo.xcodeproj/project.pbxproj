@@ -7,17 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		462BD8FC1CF5C14D004D0AF7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 462BD8FA1CF5C14D004D0AF7 /* Main.storyboard */; };
-		462BD9011CF5C14D004D0AF7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 462BD8FF1CF5C14D004D0AF7 /* LaunchScreen.storyboard */; };
-		462BD9A41CF63FC3004D0AF7 /* ACAttitude.m in Sources */ = {isa = PBXBuildFile; fileRef = 462BD9A11CF63FC3004D0AF7 /* ACAttitude.m */; };
-		462BD9A51CF63FC3004D0AF7 /* ACParallaxView.m in Sources */ = {isa = PBXBuildFile; fileRef = 462BD9A31CF63FC3004D0AF7 /* ACParallaxView.m */; };
 		462BD9BD1CF79EBD004D0AF7 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462BD9BC1CF79EBD004D0AF7 /* Metal.framework */; };
 		462BD9BF1CF79F07004D0AF7 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462BD9BE1CF79F07004D0AF7 /* MetalKit.framework */; };
 		462BD9C51CF7A207004D0AF7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462BD9C41CF7A207004D0AF7 /* Cocoa.framework */; };
 		462BD9C71CF7A2B4004D0AF7 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462BD9C61CF7A2B4004D0AF7 /* AppKit.framework */; };
-		462BD9EC1D08B621004D0AF7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 462BD9331CF5C164004D0AF7 /* Main.storyboard */; };
 		462BD9F01D08B70D004D0AF7 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462BD9EF1D08B70D004D0AF7 /* MetalKit.framework */; };
-		462BD9F11D097016004D0AF7 /* vilageto.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 462BD9DA1D06241C004D0AF7 /* vilageto.framework */; };
 		463DA3FA1D15776700BA7C31 /* BlobDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F31D15776700BA7C31 /* BlobDemoScene.m */; };
 		463DA3FB1D15776700BA7C31 /* PolarSpaceWarpingDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F51D15776700BA7C31 /* PolarSpaceWarpingDemoScene.m */; };
 		463DA3FC1D15776700BA7C31 /* PrimitivesDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F71D15776700BA7C31 /* PrimitivesDemoScene.m */; };
@@ -40,34 +34,30 @@
 		463DA41A1D157B8700BA7C31 /* SDFMetalDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4181D157B8700BA7C31 /* SDFMetalDemoViewController.m */; };
 		463DA41C1D157BA800BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA41B1D157BA800BA7C31 /* Info.plist */; };
 		463DA41E1D157BC000BA7C31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 463DA41D1D157BC000BA7C31 /* Assets.xcassets */; };
-		463DA4211D157BE600BA7C31 /* iOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA41F1D157BE600BA7C31 /* iOSTests.m */; };
-		463DA4221D157BE600BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4201D157BE600BA7C31 /* Info.plist */; };
-		463DA4251D157C0D00BA7C31 /* iOSUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4231D157C0D00BA7C31 /* iOSUITests.m */; };
-		463DA4261D157C0D00BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4241D157C0D00BA7C31 /* Info.plist */; };
-		463DA4291D157C4700BA7C31 /* tvOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4271D157C4700BA7C31 /* tvOSTests.m */; };
-		463DA42A1D157C4700BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4281D157C4700BA7C31 /* Info.plist */; };
-		463DA42D1D157C6D00BA7C31 /* tvOSUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA42B1D157C6D00BA7C31 /* tvOSUITests.m */; };
-		463DA42E1D157C6D00BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA42C1D157C6D00BA7C31 /* Info.plist */; };
-		463DA4341D157CA700BA7C31 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4301D157CA700BA7C31 /* AppDelegate.m */; };
-		463DA4351D157CA700BA7C31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4311D157CA700BA7C31 /* main.m */; };
-		463DA4361D157CA700BA7C31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4321D157CA700BA7C31 /* Assets.xcassets */; };
-		463DA4371D157CA700BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4331D157CA700BA7C31 /* Info.plist */; };
-		463DA43A1D157CD800BA7C31 /* OSXUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4381D157CD800BA7C31 /* OSXUITests.m */; };
-		463DA43B1D157CD800BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4391D157CD800BA7C31 /* Info.plist */; };
-		463DA43E1D157D0500BA7C31 /* OSXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA43C1D157D0500BA7C31 /* OSXTests.m */; };
-		463DA43F1D157D0500BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA43D1D157D0500BA7C31 /* Info.plist */; };
-		463DA4421D157D4B00BA7C31 /* MTKView+ContentScaleFactor.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4411D157D4B00BA7C31 /* MTKView+ContentScaleFactor.m */; };
-		463DA4471D157D6300BA7C31 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4441D157D6300BA7C31 /* AppDelegate.m */; };
-		463DA4481D157D6300BA7C31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4451D157D6300BA7C31 /* Assets.xcassets */; };
-		463DA4491D157D6300BA7C31 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4461D157D6300BA7C31 /* Info.plist */; };
-		463DA44B1D157D7400BA7C31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA44A1D157D7400BA7C31 /* main.m */; };
 		463DA44D1D157D8B00BA7C31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA44C1D157D8B00BA7C31 /* main.m */; };
 		463DA44E1D157E4B00BA7C31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA44A1D157D7400BA7C31 /* main.m */; };
-		463DA4511D157E8900BA7C31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 463DA44F1D157E8900BA7C31 /* Main.storyboard */; };
 		463DA4521D157F2400BA7C31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 463DA44F1D157E8900BA7C31 /* Main.storyboard */; };
 		463DA4531D157F2400BA7C31 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4451D157D6300BA7C31 /* Assets.xcassets */; };
 		463DA4541D157F3F00BA7C31 /* SDFMetalDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4181D157B8700BA7C31 /* SDFMetalDemoViewController.m */; };
 		463DA4551D157F5700BA7C31 /* MTKView+ContentScaleFactor.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4411D157D4B00BA7C31 /* MTKView+ContentScaleFactor.m */; };
+		463DA4561D15DA3900BA7C31 /* iOSTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA41F1D157BE600BA7C31 /* iOSTests.m */; };
+		463DA4571D15DA4100BA7C31 /* iOSUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4231D157C0D00BA7C31 /* iOSUITests.m */; };
+		463DA4621D15DC7300BA7C31 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 463DA4611D15DC7300BA7C31 /* Metal.framework */; };
+		463DA4641D15DC9300BA7C31 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 463DA4631D15DC9300BA7C31 /* MetalKit.framework */; };
+		463DA4651D15DD6300BA7C31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4311D157CA700BA7C31 /* main.m */; };
+		463DA4661D15DD6E00BA7C31 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4301D157CA700BA7C31 /* AppDelegate.m */; };
+		463DA4671D15DD7B00BA7C31 /* BlobDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F31D15776700BA7C31 /* BlobDemoScene.m */; };
+		463DA4681D15DD7B00BA7C31 /* PolarSpaceWarpingDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F51D15776700BA7C31 /* PolarSpaceWarpingDemoScene.m */; };
+		463DA4691D15DD7B00BA7C31 /* PrimitivesDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F71D15776700BA7C31 /* PrimitivesDemoScene.m */; };
+		463DA46A1D15DD7B00BA7C31 /* ThreeDSpaceWarpingDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F91D15776700BA7C31 /* ThreeDSpaceWarpingDemoScene.m */; };
+		463DA46B1D15DD7B00BA7C31 /* MetalSceneMananger.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3FF1D15778E00BA7C31 /* MetalSceneMananger.m */; };
+		463DA46C1D15DD7B00BA7C31 /* Scene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4011D15778E00BA7C31 /* Scene.m */; };
+		463DA46D1D15DD9200BA7C31 /* SignedDistanceBoundsPerformanceShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4051D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m */; };
+		463DA46E1D15DD9200BA7C31 /* SDFMetalDemoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4181D157B8700BA7C31 /* SDFMetalDemoViewController.m */; };
+		463DA4721D15DDD200BA7C31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 463DA46F1D15DDC900BA7C31 /* Main.storyboard */; };
+		463DA4731D15DE2100BA7C31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 463DA45A1D15DBB300BA7C31 /* LaunchScreen.storyboard */; };
+		463DA4741D15DE2100BA7C31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 463DA45C1D15DBB300BA7C31 /* Main.storyboard */; };
+		463DA4751D15DE3700BA7C31 /* static-sdf-template-metal-shader.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4121D1578DB00BA7C31 /* static-sdf-template-metal-shader.tpl */; };
 		463E30901D0D9CCD007A448A /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
 		463E30911D0F186F007A448A /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
 		46963B8A1D13588A00051482 /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
@@ -143,26 +133,18 @@
 
 /* Begin PBXFileReference section */
 		462BD8EE1CF5C14C004D0AF7 /* SDFMetalDemo-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFMetalDemo-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		462BD8FB1CF5C14D004D0AF7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		462BD9001CF5C14D004D0AF7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		462BD9071CF5C14D004D0AF7 /* SDFMetalDemo-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SDFMetalDemo-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		462BD9121CF5C14D004D0AF7 /* SDFMetalDemo-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SDFMetalDemo-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		462BD9281CF5C164004D0AF7 /* SDFMetalDemo-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFMetalDemo-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		462BD9341CF5C164004D0AF7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = "../voĉo-tvOS/Base.lproj/Main.storyboard"; sourceTree = "<group>"; };
 		462BD93D1CF5C164004D0AF7 /* SDFMetalDemo-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SDFMetalDemo-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		462BD9481CF5C164004D0AF7 /* SDFMetalDemo-tvOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SDFMetalDemo-tvOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		462BD95C1CF5C17F004D0AF7 /* SDFMetalDemo-OSX.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFMetalDemo-OSX.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		462BD9711CF5C17F004D0AF7 /* SDFMetalDemo-OSXTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SDFMetalDemo-OSXTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		462BD97C1CF5C17F004D0AF7 /* SDFMetalDemo-OSXUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SDFMetalDemo-OSXUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		462BD9A01CF63FC3004D0AF7 /* ACAttitude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ACAttitude.h; path = "voco-common/parallax/ACAttitude.h"; sourceTree = "<group>"; };
-		462BD9A11CF63FC3004D0AF7 /* ACAttitude.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ACAttitude.m; path = "voco-common/parallax/ACAttitude.m"; sourceTree = "<group>"; };
-		462BD9A21CF63FC3004D0AF7 /* ACParallaxView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ACParallaxView.h; path = "voco-common/parallax/ACParallaxView.h"; sourceTree = "<group>"; };
-		462BD9A31CF63FC3004D0AF7 /* ACParallaxView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ACParallaxView.m; path = "voco-common/parallax/ACParallaxView.m"; sourceTree = "<group>"; };
 		462BD9BC1CF79EBD004D0AF7 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		462BD9BE1CF79F07004D0AF7 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		462BD9C41CF7A207004D0AF7 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		462BD9C61CF7A2B4004D0AF7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.11.sdk/System/Library/Frameworks/AppKit.framework; sourceTree = DEVELOPER_DIR; };
-		462BD9DA1D06241C004D0AF7 /* vilageto.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vilageto.framework; path = "/Users/ajres/projects/SDFMetalDemo/voĉo-iOS/Frameworks/vilageto.framework"; sourceTree = "<absolute>"; };
 		462BD9EF1D08B70D004D0AF7 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS9.2.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		463DA3F21D15776700BA7C31 /* BlobDemoScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobDemoScene.h; path = common/scenes/BlobDemoScene.h; sourceTree = "<group>"; };
 		463DA3F31D15776700BA7C31 /* BlobDemoScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BlobDemoScene.m; path = common/scenes/BlobDemoScene.m; sourceTree = "<group>"; };
@@ -213,6 +195,11 @@
 		463DA44A1D157D7400BA7C31 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = OSX/main.m; sourceTree = SOURCE_ROOT; };
 		463DA44C1D157D8B00BA7C31 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = iOS/main.m; sourceTree = SOURCE_ROOT; };
 		463DA4501D157E8900BA7C31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = OSX/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
+		463DA45B1D15DBB300BA7C31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = iOS/Base.lproj/LaunchScreen.storyboard; sourceTree = SOURCE_ROOT; };
+		463DA45D1D15DBB300BA7C31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = iOS/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
+		463DA4611D15DC7300BA7C31 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		463DA4631D15DC9300BA7C31 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		463DA4701D15DDC900BA7C31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = tvOS/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 		463E308E1D0D9CCD007A448A /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
 		463E308F1D0D9CCD007A448A /* Stack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stack.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -222,7 +209,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				462BD9F11D097016004D0AF7 /* vilageto.framework in Frameworks */,
+				463DA4641D15DC9300BA7C31 /* MetalKit.framework in Frameworks */,
+				463DA4621D15DC7300BA7C31 /* Metal.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -309,6 +297,7 @@
 				462BD9741CF5C17F004D0AF7 /* OSXTests */,
 				462BD97F1CF5C17F004D0AF7 /* OSXUITests */,
 				462BD8EF1CF5C14C004D0AF7 /* Products */,
+				463DA4601D15DC7300BA7C31 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -331,14 +320,14 @@
 		462BD8F01CF5C14D004D0AF7 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				463DA45A1D15DBB300BA7C31 /* LaunchScreen.storyboard */,
+				463DA45C1D15DBB300BA7C31 /* Main.storyboard */,
 				463DA41D1D157BC000BA7C31 /* Assets.xcassets */,
 				463DA41B1D157BA800BA7C31 /* Info.plist */,
 				463DA4151D157B8700BA7C31 /* AppDelegate.h */,
 				463DA4161D157B8700BA7C31 /* AppDelegate.m */,
 				463DA4171D157B8700BA7C31 /* SDFMetalDemoViewController.h */,
 				463DA4181D157B8700BA7C31 /* SDFMetalDemoViewController.m */,
-				462BD8FA1CF5C14D004D0AF7 /* Main.storyboard */,
-				462BD8FF1CF5C14D004D0AF7 /* LaunchScreen.storyboard */,
 				462BD8F11CF5C14D004D0AF7 /* Supporting Files */,
 			);
 			name = iOS;
@@ -376,12 +365,12 @@
 		462BD9291CF5C164004D0AF7 /* tvOS */ = {
 			isa = PBXGroup;
 			children = (
+				463DA46F1D15DDC900BA7C31 /* Main.storyboard */,
 				463DA42F1D157CA700BA7C31 /* AppDelegate.h */,
 				463DA4301D157CA700BA7C31 /* AppDelegate.m */,
 				463DA4311D157CA700BA7C31 /* main.m */,
 				463DA4321D157CA700BA7C31 /* Assets.xcassets */,
 				463DA4331D157CA700BA7C31 /* Info.plist */,
-				462BD9331CF5C164004D0AF7 /* Main.storyboard */,
 				462BD92A1CF5C164004D0AF7 /* Supporting Files */,
 			);
 			name = tvOS;
@@ -464,20 +453,8 @@
 			children = (
 				462BD9AF1CF64907004D0AF7 /* scenes */,
 				462BD9A61CF647FC004D0AF7 /* SDF */,
-				462BD98D1CF63F9D004D0AF7 /* parallax */,
 			);
 			name = Common;
-			sourceTree = "<group>";
-		};
-		462BD98D1CF63F9D004D0AF7 /* parallax */ = {
-			isa = PBXGroup;
-			children = (
-				462BD9A01CF63FC3004D0AF7 /* ACAttitude.h */,
-				462BD9A11CF63FC3004D0AF7 /* ACAttitude.m */,
-				462BD9A21CF63FC3004D0AF7 /* ACParallaxView.h */,
-				462BD9A31CF63FC3004D0AF7 /* ACParallaxView.m */,
-			);
-			name = parallax;
 			sourceTree = "<group>";
 		};
 		462BD98E1CF63FA5004D0AF7 /* ComputeShader */ = {
@@ -519,6 +496,15 @@
 				463DA3F91D15776700BA7C31 /* ThreeDSpaceWarpingDemoScene.m */,
 			);
 			name = scenes;
+			sourceTree = "<group>";
+		};
+		463DA4601D15DC7300BA7C31 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				463DA4631D15DC9300BA7C31 /* MetalKit.framework */,
+				463DA4611D15DC7300BA7C31 /* Metal.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -764,23 +750,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				463DA4491D157D6300BA7C31 /* Info.plist in Resources */,
-				463DA4261D157C0D00BA7C31 /* Info.plist in Resources */,
-				462BD9011CF5C14D004D0AF7 /* LaunchScreen.storyboard in Resources */,
-				463DA4361D157CA700BA7C31 /* Assets.xcassets in Resources */,
-				463DA42A1D157C4700BA7C31 /* Info.plist in Resources */,
-				463DA4481D157D6300BA7C31 /* Assets.xcassets in Resources */,
-				463DA4511D157E8900BA7C31 /* Main.storyboard in Resources */,
+				463DA4731D15DE2100BA7C31 /* LaunchScreen.storyboard in Resources */,
+				463DA4741D15DE2100BA7C31 /* Main.storyboard in Resources */,
 				463DA41C1D157BA800BA7C31 /* Info.plist in Resources */,
 				463DA4131D1578DB00BA7C31 /* static-sdf-template-metal-shader.tpl in Resources */,
-				463DA43F1D157D0500BA7C31 /* Info.plist in Resources */,
 				463DA40A1D1577F400BA7C31 /* spatial_photonics_types in Resources */,
 				463DA41E1D157BC000BA7C31 /* Assets.xcassets in Resources */,
-				463DA4371D157CA700BA7C31 /* Info.plist in Resources */,
-				462BD8FC1CF5C14D004D0AF7 /* Main.storyboard in Resources */,
-				463DA42E1D157C6D00BA7C31 /* Info.plist in Resources */,
-				463DA4221D157BE600BA7C31 /* Info.plist in Resources */,
-				463DA43B1D157CD800BA7C31 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -802,7 +777,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				462BD9EC1D08B621004D0AF7 /* Main.storyboard in Resources */,
+				463DA4751D15DE3700BA7C31 /* static-sdf-template-metal-shader.tpl in Resources */,
+				463DA4721D15DDD200BA7C31 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -851,31 +827,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				463DA43A1D157CD800BA7C31 /* OSXUITests.m in Sources */,
-				463DA4341D157CA700BA7C31 /* AppDelegate.m in Sources */,
 				463E30901D0D9CCD007A448A /* Stack.m in Sources */,
 				463DA4021D15778E00BA7C31 /* MetalSceneMananger.m in Sources */,
-				463DA4421D157D4B00BA7C31 /* MTKView+ContentScaleFactor.m in Sources */,
 				463DA4091D1577F400BA7C31 /* SignedDistanceBoundsShader.metal in Sources */,
-				463DA4251D157C0D00BA7C31 /* iOSUITests.m in Sources */,
-				463DA4211D157BE600BA7C31 /* iOSTests.m in Sources */,
 				463DA3FA1D15776700BA7C31 /* BlobDemoScene.m in Sources */,
-				462BD9A51CF63FC3004D0AF7 /* ACParallaxView.m in Sources */,
 				463DA3FB1D15776700BA7C31 /* PolarSpaceWarpingDemoScene.m in Sources */,
 				463DA4081D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m in Sources */,
-				463DA4351D157CA700BA7C31 /* main.m in Sources */,
 				463DA4191D157B8700BA7C31 /* AppDelegate.m in Sources */,
 				463DA3FD1D15776700BA7C31 /* ThreeDSpaceWarpingDemoScene.m in Sources */,
 				463DA44D1D157D8B00BA7C31 /* main.m in Sources */,
-				463DA44B1D157D7400BA7C31 /* main.m in Sources */,
 				463DA3FC1D15776700BA7C31 /* PrimitivesDemoScene.m in Sources */,
-				463DA43E1D157D0500BA7C31 /* OSXTests.m in Sources */,
-				463DA4291D157C4700BA7C31 /* tvOSTests.m in Sources */,
 				463DA41A1D157B8700BA7C31 /* SDFMetalDemoViewController.m in Sources */,
-				463DA4471D157D6300BA7C31 /* AppDelegate.m in Sources */,
-				463DA42D1D157C6D00BA7C31 /* tvOSUITests.m in Sources */,
 				463DA4031D15778E00BA7C31 /* Scene.m in Sources */,
-				462BD9A41CF63FC3004D0AF7 /* ACAttitude.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -883,6 +846,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				463DA4561D15DA3900BA7C31 /* iOSTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -890,6 +854,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				463DA4571D15DA4100BA7C31 /* iOSUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -897,6 +862,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				463DA46D1D15DD9200BA7C31 /* SignedDistanceBoundsPerformanceShader.m in Sources */,
+				463DA46E1D15DD9200BA7C31 /* SDFMetalDemoViewController.m in Sources */,
+				463DA4671D15DD7B00BA7C31 /* BlobDemoScene.m in Sources */,
+				463DA4681D15DD7B00BA7C31 /* PolarSpaceWarpingDemoScene.m in Sources */,
+				463DA4691D15DD7B00BA7C31 /* PrimitivesDemoScene.m in Sources */,
+				463DA46A1D15DD7B00BA7C31 /* ThreeDSpaceWarpingDemoScene.m in Sources */,
+				463DA46B1D15DD7B00BA7C31 /* MetalSceneMananger.m in Sources */,
+				463DA46C1D15DD7B00BA7C31 /* Scene.m in Sources */,
+				463DA4661D15DD6E00BA7C31 /* AppDelegate.m in Sources */,
+				463DA4651D15DD6300BA7C31 /* main.m in Sources */,
 				46963B8A1D13588A00051482 /* Stack.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -983,34 +958,34 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		462BD8FA1CF5C14D004D0AF7 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				462BD8FB1CF5C14D004D0AF7 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		462BD8FF1CF5C14D004D0AF7 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				462BD9001CF5C14D004D0AF7 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		462BD9331CF5C164004D0AF7 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				462BD9341CF5C164004D0AF7 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		463DA44F1D157E8900BA7C31 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				463DA4501D157E8900BA7C31 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		463DA45A1D15DBB300BA7C31 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				463DA45B1D15DBB300BA7C31 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		463DA45C1D15DBB300BA7C31 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				463DA45D1D15DBB300BA7C31 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		463DA46F1D15DDC900BA7C31 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				463DA4701D15DDC900BA7C31 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1110,14 +1085,13 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/voĉo-iOS/Frameworks",
-					"$(PROJECT_DIR)/voĉo-OSX/Frameworks",
+					"$(PROJECT_DIR)/iOS/Frameworks",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					TARGET_IOS,
 				);
-				INFOPLIST_FILE = "voĉo-iOS/Info.plist";
+				INFOPLIST_FILE = iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1132,11 +1106,10 @@
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/voĉo-iOS/Frameworks",
-					"$(PROJECT_DIR)/voĉo-OSX/Frameworks",
+					"$(PROJECT_DIR)/iOS/Frameworks",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = TARGET_IOS;
-				INFOPLIST_FILE = "voĉo-iOS/Info.plist";
+				INFOPLIST_FILE = iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-iOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1147,7 +1120,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = "voĉo-iOSTests/Info.plist";
+				INFOPLIST_FILE = iOSTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-iOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1159,7 +1132,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				INFOPLIST_FILE = "voĉo-iOSTests/Info.plist";
+				INFOPLIST_FILE = iOSTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-iOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1196,12 +1169,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/voĉo-iOS/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/tvOS/Frameworks";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"TARGET_IOS=1",
 				);
-				INFOPLIST_FILE = "voĉo-tvOS/Info.plist";
+				INFOPLIST_FILE = tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1219,9 +1192,9 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "iPhone Developer";
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/voĉo-iOS/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/tvOS/Frameworks";
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "TARGET_IOS=1";
-				INFOPLIST_FILE = "voĉo-tvOS/Info.plist";
+				INFOPLIST_FILE = tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";

@@ -1,8 +1,4 @@
-//
-//  NSView+ContentScaleFactor.m
-//  voĉo
-//  Copyright © 2016 Novoĉo. All rights reserved.
-//
+
 #ifdef __APPLE__
 
 #import "MTKView+ContentScaleFactor.h"
