@@ -187,8 +187,6 @@
 	        case fSphereType:
 	        {
                 [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fSphere(pos, %f),%i);\n",i,currNode.floats[9],i]];
-                
-                //[mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fSphere(pos, scene.nodes[%i].floats[9]),%i);\n",i,i,i]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
@@ -199,6 +197,24 @@
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
+            case fRoundBoxType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fRoundBox(pos, vec3(%f,%f,%f),%f),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+            break;
+            case fTorusType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTorus(pos, %f,%f),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+            case fCapsuleType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCapsule(pos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
             case fOctahedronType:
             {
                 [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fOctahedron(pos,%f),%i);\n",i,currNode.floats[9],i]];
