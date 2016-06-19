@@ -215,6 +215,43 @@
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
+            case fTriPrismType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTriPrism(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+            case fCylinderType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCylinder(pos, %f,%f),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+                
+            case fConeType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCone(pos, %f,%f),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+            case fTorus82Type:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTorus82(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+            case fTorus88Type:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTorus88(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+            case fCylinder6Type:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCylinder6(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
             case fOctahedronType:
             {
                 [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fOctahedron(pos,%f),%i);\n",i,currNode.floats[9],i]];
@@ -224,6 +261,12 @@
             case fEllipsoidType:
             {
                 [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fEllipsoid(pos, vec3(%f,%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+                break;
+            case fHexagonIncircleType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fHexagonIncircle(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
@@ -250,9 +293,15 @@
                 [mutableFuncBody appendString:[NSString stringWithFormat:@"pModOffset(pos, vec3(%f,%f,%f))\n;",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
 	        }
 	        break;
+            case pModRotateType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"pR(pos,%i,%i,%f)\n;",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
+                //pR(thread vec3 &p, int axis1, int axis2, float a)
+            }
+                break;
 	        case pModPolarType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"cell = pModPolar(pos,0,2,%f);\n",currNode.floats[0]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"cell = pModPolar(pos,%i,%i,%f);\n",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
 	            
 	        }
 	        break;

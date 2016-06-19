@@ -542,7 +542,17 @@ vec3 mod(vec3 x, vec3 y)
 	void pR(thread vec2 &p, float a) {
 		p = cos(a)*p + sin(a)*vec2(p.y, -p.x);
 	}
-	
+
+// Rotate around a coordinate axis (i.e. in a plane perpendicular to that axis) by angle <a>.
+// Read like this: R(p.xz, a) rotates "x towards z".
+// This is fast if <a> is a compile-time constant and slower (but still practical) if not.
+    void pR(thread vec3 &p, int axis1, int axis2, float a);
+    void pR(thread vec3 &p, int axis1, int axis2, float a) {
+        vec2 v = cos(a)*vec2(p[axis1],p[axis2]) + sin(a)*vec2(p[axis2], -p[axis1]);
+        p[axis1] = v.x;
+        p[axis2] = v.y;
+    }
+
 // Shortcut for 45-degrees rotation
 	void pR45(thread vec2 &p);
 	void pR45(thread vec2 &p) {
@@ -615,8 +625,8 @@ vec3 mod(vec3 x, vec3 y)
 	
 // Repeat around the origin by a fixed angle.
 // For easier use, num of repetitions is use to specify the angle.
-	float pModPolar(thread vec3 &p, uint axis1, uint axis2, float repetitions);
-	float pModPolar(thread vec3 &p, uint axis1, uint axis2, float repetitions) {
+	float pModPolar(thread vec3 &p, int axis1, int axis2, float repetitions);
+	float pModPolar(thread vec3 &p, int axis1, int axis2, float repetitions) {
 		float angle = 2*PI/repetitions;
 		float a = atan2(p[axis2], p[axis1]) + angle/2.;
 		float r = length(vec2(p[axis1],p[axis2]));
@@ -1152,30 +1162,31 @@ return vec2(max(-d2.x,d1.x), nodeId);
  * END OF Ported Primitives
  */
 
-
-	enum nodeType {
-		fPlaneType = 1,
-		fSphereType = 2,
-		fBoxCheapType = 3,
-		fRoundBoxType = 4,
-		fTorusType = 5,
-		fTorus82Type = 6,
-		fTorus88Type = 7,
-		fCapsuleType = 8,
-		fTriPrismType = 9,
-		fCylinderType = 10,
-		fCylinder6Type = 11,
-		fConeType = 12,
+    enum nodeType {
+        fPlaneType = 1,
+        fSphereType = 2,
+        fBoxCheapType = 3,
+        fRoundBoxType = 4,
+        fTorusType = 5,
+        fTorus82Type = 6,
+        fTorus88Type = 7,
+        fCapsuleType = 8,
+        fTriPrismType = 9,
+        fCylinderType = 10,
+        fCylinder6Type = 11,
+        fConeType = 12,
         fOctahedronType = 13,
         fEllipsoidType = 14,
-        fBlobType = 15,
-		pUnionType = 16,
-		pSubtractionType = 17,
-		pModOffsetType = 18,
-		pModPolarType = 19,
-		pModResetType = 20,
-        pMod3Type = 21
-	};
+        fHexagonIncircleType = 15,
+        fBlobType = 16,
+        pUnionType = 17,
+        pSubtractionType = 18,
+        pModOffsetType = 19,
+        pModRotateType = 20,
+        pModPolarType = 21,
+        pModResetType = 22,
+        pMod3Type = 23
+    };
 
 	struct SDFMaterial {
 		float red;
@@ -1183,7 +1194,7 @@ return vec2(max(-d2.x,d1.x), nodeId);
 		float blue;
 		float alpha;
 	};
-	
+
 	struct SDFNode {
 		size_t functionHash;
 		enum nodeType type;
@@ -1352,7 +1363,7 @@ return vec2(max(-d2.x,d1.x), nodeId);
         float candidate_t = t_min;
         float previousRadius = 0;
         float stepLength = 0;
-float functionSign = 1.0; //map(ro).x < 0 ? -1 : +1;
+        float functionSign = 1.0; //map(ro).x < 0 ? -1 : +1;
         float m = -1.0;
 
         for (int i = 0; i < MAX_ITERATIONS; ++i) {

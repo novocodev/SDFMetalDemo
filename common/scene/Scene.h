@@ -21,13 +21,15 @@ enum nodeType {
     fConeType = 12,
     fOctahedronType = 13,
     fEllipsoidType = 14,
-    fBlobType = 15,
-    pUnionType = 16,
-    pSubtractionType = 17,
-    pModOffsetType = 18,
-    pModPolarType = 19,
-    pModResetType = 20,
-    pMod3Type = 21
+    fHexagonIncircleType = 15,
+    fBlobType = 16,
+    pUnionType = 17,
+    pSubtractionType = 18,
+    pModOffsetType = 19,
+    pModRotateType = 20,
+    pModPolarType = 21,
+    pModResetType = 22,
+    pMod3Type = 23
 };
 
 typedef struct SDFMaterial {

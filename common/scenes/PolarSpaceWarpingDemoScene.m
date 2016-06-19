@@ -71,6 +71,8 @@
     
     struct SDFNode node0ModPolar;
     node0ModPolar.type = pModPolarType;
+    node0ModPolar.ints[0] = 0; // repetitions
+    node0ModPolar.ints[1] = 2; // repetitions
     node0ModPolar.floats[0] = 6.0; // repetitions
     scene->nodes[0] = node0ModPolar;
      

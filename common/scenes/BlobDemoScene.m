@@ -7,7 +7,7 @@
 }
 
 - (instancetype) init {
-    if (self = [super initWithTargetFramerate: 15 supportsPicking: true])
+    if (self = [super initWithTargetFramerate: 15 supportsPicking: false])
     {
         //Add custom setup here
         //Add a timer that is going to update scene content every second

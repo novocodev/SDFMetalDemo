@@ -30,7 +30,7 @@
     
     // camera
     vector_float3 origin = { -0.5+3.5*cos(0.0), 1.0, 0.5 + 3.5*sin(0.0) };
-    //vector_float3 origin = { 0.0, 0.0, 10.0 };
+
     vector_float3 target = { 0.0, 0.0, 0.0 };
     
     matrix_float3x3 camera = [self setupCamera:origin target: target rotation:M_PI];
