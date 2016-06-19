@@ -11,7 +11,7 @@ IQ's Signed Distance Bounds [demo on shadertoy](https://www.shadertoy.com/view/X
 
 And the [hg_sdf](http://mercury.sexy/hg_sdf/) Signed distance library by mercury
 
-Wikipedias [SDF page](https://en.wikipedia.org/wiki/Signed_distance_function)
+Wikipedia's [SDF page](https://en.wikipedia.org/wiki/Signed_distance_function)
 
 ## Features
 
