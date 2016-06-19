@@ -19,15 +19,15 @@ This demo exhibits some interesting features.
 
 1. Resolution variable rendering
 
-The View controller tracks rendered frames per second and adjusts the view content scale dynamically to maintain a target frame rate. Typically 15FPS across desktop and mobile devices will give acceptable resolution.
+ The View controller tracks rendered frames per second and adjusts the view content scale dynamically to maintain a target frame rate. Typically 15FPS across desktop and mobile devices will give acceptable resolution.
 
 2. Shader JIT compilation
 
-To support dynamic shader content the shader is re-compiled inflight when the structure of a scene changes. This ensures that the shader is always optimised for maximum rendering FPS.
+ To support dynamic shader content the shader is re-compiled inflight when the structure of a scene changes. This ensures that the shader is always optimised for maximum rendering FPS.
 
 3. Shader based picking
 
-The same shader is used to pick scene objects in response to touch or mouse events, this guarantees picking is using exactly the same model state as the last frame rendered, maximising picking accuracy.
+ The same shader is used to pick scene objects in response to touch or mouse events, this guarantees picking is using exactly the same model state as the last frame rendered, maximising picking accuracy.
 
 ## Demo scenes
 
@@ -35,18 +35,19 @@ When the Demo app is launched the following scenes will be displayed for 10 seco
 
  1. 3D Space Warping
  
-SDF can fold space to generate multiple instances of an object, this is really cheap as it uses modulus to acheive this. The demo has an infinaite number of cubes with spherical holes, the limits of the scene are controlled by the maximum distance renderd by the camera.
+ SDF can fold space to generate multiple instances of an object, this is really cheap as it uses modulus to acheive this. The demo has an infinaite number of cubes with spherical holes, the limits of the scene are controlled by the maximum distance renderd by the camera.
 
  2. Polar Space Warping
+ 
  A demo of space folding using polar coordinates rather then linear coordinates. A single object (cube minus sphere) is repeated 6 times around an origin.
 
  3. Blob
  
-Demonstrates objects with non planar surfaces.
+ Demonstrates objects with non planar surfaces.
 
  4. Primitives
  
-Demonstrates the wide range of SDF's supported, initially a port (in progress) of IQ's Signed Distance Bounds [demo on shadertoy](https://www.shadertoy.com/view/Xds3zN), will be updated as more functions are added).
+ Demonstrates the wide range of SDF's supported, initially a port (in progress) of IQ's Signed Distance Bounds [demo on shadertoy](https://www.shadertoy.com/view/Xds3zN), will be updated as more functions are added).
 
 ## Known Issues
 
