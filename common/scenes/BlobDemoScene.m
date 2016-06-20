@@ -23,10 +23,6 @@
 - (void) setupScene: (SDFScene *)scene {
     
     scene->modelVersion = 1.0; //Model version to allow shaders to barf if they are not compatible
-    scene->deviceAttitudePitch = 0.0; //_deviceAttitudePitch;
-    scene->deviceAttitudeRoll = 0.0; //_deviceAttitudeRoll;
-    scene->deviceAttitudeYaw = 0.0; //_deviceAttitudeYaw;
-    //NSLog(@"texture width = %f, hight = %f",textureWidth, textureHeight);
     
     // camera
     vector_float3 origin = { -0.5+5.5*cos(0.0), 1.0, 0.5 + 5.5*sin(0.0) };

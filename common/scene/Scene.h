@@ -51,15 +51,13 @@ typedef struct SDFNode {
 
 typedef struct SDFScene {
     float modelVersion;
-    float deviceAttitudePitch;
-    float deviceAttitudeRoll;
-    float deviceAttitudeYaw;
     matrix_float3x3 cameraTransform;
     vector_float3 rayOrigin;
-    unsigned int nodeCount;
-    struct SDFNode nodes[60];
+    uint nodeCount;
     struct SDFMaterial materials[10];
+    struct SDFNode nodes[60];
 } SDFScene;
+
 
 typedef struct SDFUniforms {
     float modelVersion;

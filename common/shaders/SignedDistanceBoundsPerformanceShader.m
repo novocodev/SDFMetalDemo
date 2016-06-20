@@ -49,6 +49,8 @@
 
     [self uniformBuffer:uniformBuffer bufferSize:sizeof(struct SDFScene)];
     
+    //[self uniformBuffer:uniformBuffer bufferSize:sizeof(struct SDFUniforms)];
+    
     if (!_pipeline)
     {
         NSLog(@"Error occurred when building compute pipeline for function %@", kernelName);
@@ -60,7 +62,7 @@
     
     const unsigned int length_pagealigned = (size/4096 +1)*4096;
 	_uniformBuffer = [_device newBufferWithBytesNoCopy:buffer length:length_pagealigned options:MTLResourceCPUCacheModeDefaultCache deallocator:nil];
-    //_uniformBuffer = [_device newBufferWithBytes:buffer length:length_pagealigned options:MTLResourceCPUCacheModeDefaultCache];
+
 }
     
 

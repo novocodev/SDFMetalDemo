@@ -1207,14 +1207,11 @@ return vec2(max(-d2.x,d1.x), nodeId);
 	
 	struct SDFScene {
 		float modelVersion;
-		float deviceAttitudePitch;
-		float deviceAttitudeRoll;
-		float deviceAttitudeYaw;
 		mat3 cameraTransform;
 		vec3 rayOrigin;
 		uint nodeCount;
-		struct SDFNode nodes[60];
 		struct SDFMaterial materials[10];
+		struct SDFNode nodes[60];
 	};
 
     struct SDFUniforms {

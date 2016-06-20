@@ -23,10 +23,6 @@
 - (void) setupScene: (SDFScene *)scene {
     
     scene->modelVersion = 1.0; //Model version to allow shaders to barf if they are not compatible
-    scene->deviceAttitudePitch = 0.0; //_deviceAttitudePitch;
-    scene->deviceAttitudeRoll = 0.0; //_deviceAttitudeRoll;
-    scene->deviceAttitudeYaw = 0.0; //_deviceAttitudeYaw;
-    //NSLog(@"texture width = %f, hight = %f",textureWidth, textureHeight);
     
     // camera
     vector_float3 origin = { -0.5+5.5*cos(0.0), 1.0, 0.5 + 5.5*sin(0.0) };
@@ -38,7 +34,7 @@
     scene->cameraTransform = camera;
     scene->rayOrigin = origin;
     
-    scene->nodeCount = 45;
+    scene->nodeCount = 47;
     
     struct SDFMaterial materialRed;
     materialRed.red = 1.0;
@@ -318,36 +314,47 @@
     node39ModOffset.floats[2] = 1.0; // z-offset
     scene->nodes[39] = node39ModOffset;
 
-    struct SDFNode node40RoundBox;
-    node40RoundBox.type = fRoundBoxType;
-    node40RoundBox.materialId = 1;
-    node40RoundBox.floats[9] = 0.15; // x dim
-    node40RoundBox.floats[10] = 0.15; // y dim
-    node40RoundBox.floats[11] = 0.15; // z dim
-    node40RoundBox.floats[12] = 0.05; // z dim
-    scene->nodes[40] = node40RoundBox;
+    struct SDFNode node40Sphere;
+    node40Sphere.type = fSphereType;
+    node40Sphere.materialId = 0;
+    node40Sphere.floats[9] = 0.25; // radius
+    scene->nodes[40] = node40Sphere;
+
+    struct SDFNode node41RoundBox;
+    node41RoundBox.type = fRoundBoxType;
+    node41RoundBox.materialId = 1;
+    node41RoundBox.floats[9] = 0.15; // x dim
+    node41RoundBox.floats[10] = 0.15; // y dim
+    node41RoundBox.floats[11] = 0.15; // z dim
+    node41RoundBox.floats[12] = 0.05; // z dim
+    scene->nodes[41] = node41RoundBox;
     
-    struct SDFNode node41Union;
-    node41Union.type = pUnionType;
-    scene->nodes[41] = node41Union;
+    struct SDFNode node42Subtraction;
+    node42Subtraction.type = pSubtractionType;
+    node42Subtraction.materialId = 3;
+    scene->nodes[42] = node42Subtraction;
     
-    struct SDFNode node42ModOffset;
-    node42ModOffset.type = pModOffsetType;
-    node42ModOffset.floats[0] = 0.0; // x-offset
-    node42ModOffset.floats[1] = 0.0; // y-offset
-    node42ModOffset.floats[2] = -1.0; // z-offset
-    scene->nodes[42] = node42ModOffset;
+    struct SDFNode node43Union;
+    node43Union.type = pUnionType;
+    scene->nodes[43] = node43Union;
     
-    struct SDFNode node43Torus82;
-    node43Torus82.type = fTorus82Type;
-    node43Torus82.materialId = 1;
-    node43Torus82.floats[9] = 0.2; // x dim
-    node43Torus82.floats[10] = 0.1; // y dim
-    scene->nodes[43] = node43Torus82;
+    struct SDFNode node44ModOffset;
+    node44ModOffset.type = pModOffsetType;
+    node44ModOffset.floats[0] = 0.0; // x-offset
+    node44ModOffset.floats[1] = 0.0; // y-offset
+    node44ModOffset.floats[2] = -1.0; // z-offset
+    scene->nodes[44] = node44ModOffset;
+    
+    struct SDFNode node45Torus82;
+    node45Torus82.type = fTorus82Type;
+    node45Torus82.materialId = 1;
+    node45Torus82.floats[9] = 0.2; // x dim
+    node45Torus82.floats[10] = 0.1; // y dim
+    scene->nodes[45] = node45Torus82;
     
     struct SDFNode node44Union;
     node44Union.type = pUnionType;
-    scene->nodes[44] = node44Union;
+    scene->nodes[46] = node44Union;
     
 }
 
@@ -355,10 +362,6 @@
  * Primitives still to be ported from shadertoy demo
  *
 
- res = pU( res, vec2( pS(
- fRoundBox(pos - vec3(-2.0,0.2, 1.0), vec3(0.15),0.05), //Node 40
- fSphere(    pos - vec3(-2.0,0.2, 1.0), 0.25)), 13.0 ) ); //No way to do this in current render model
- 
  
  res = pU( res, vec2( pS(
  fTorus82(  pos - vec3(-2.0,0.2, 0.0), vec2(0.20,0.1)), //Node 43

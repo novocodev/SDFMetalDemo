@@ -284,8 +284,13 @@
 	        break;
 	        case pSubtractionType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"res = pS(%@,%@,%i);\n",[ds pop], [ds pop], i]];
-                [ds push:@"res"];
+                if ([ds size] == 2) {
+                    [mutableFuncBody appendString:[NSString stringWithFormat:@"res = pS(%@,%@,%i);\n",[ds pop], [ds pop], i]];
+                    [ds push:@"res"];
+                } else {
+                    [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = pS(%@,%@,%i);\n",i,[ds pop], [ds pop], i]];
+                    [ds push:[NSString stringWithFormat:@"res%i",i]];
+                }
 	        }
 	        break;
 	        case pModOffsetType:
@@ -333,13 +338,6 @@
 
         dispatch_async(_clientRequestQueue, ^{
             @autoreleasepool {
-                
-                //TODO: ?
-                //BOOL updatedSceneContent = [_currentScene updateScene:_uniformBuffer atMediaTime:(CACurrentMediaTime() - _mediaStartTime)];
-                 
-                 //if(updatedSceneContent) {
-                 //dispatch_async(_shaderJITQueue, ^{
-
                  //Build a shader and compile it
                  //Then push it back onto the client request queue to replace
                  //the dynamic shader

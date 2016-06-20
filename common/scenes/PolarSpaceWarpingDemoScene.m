@@ -23,10 +23,6 @@
 - (void) setupScene: (SDFScene *)scene {
     
     scene->modelVersion = 1.0; //Model version to allow shaders to barf if they are not compatible
-    scene->deviceAttitudePitch = 0.0; //_deviceAttitudePitch;
-    scene->deviceAttitudeRoll = 0.0; //_deviceAttitudeRoll;
-    scene->deviceAttitudeYaw = 0.0; //_deviceAttitudeYaw;
-    //NSLog(@"texture width = %f, hight = %f",textureWidth, textureHeight);
     
     // camera
     vector_float3 origin = { -0.5+3.5*cos(0.0), 1.0, 0.5 + 3.5*sin(0.0) };
@@ -87,15 +83,6 @@
     node0RedSphere.functionHash = fTriPrismType;
     node0RedSphere.type = fSphereType;
     node0RedSphere.materialId = 0;
-    node0RedSphere.floats[0] = 0.0; // MATRIX
-    node0RedSphere.floats[1] = 0.0; // MATRIX
-    node0RedSphere.floats[2] = 0.0; // MATRIX
-    node0RedSphere.floats[3] = 0.0; // MATRIX
-    node0RedSphere.floats[4] = 0.0; // MATRIX
-    node0RedSphere.floats[5] = 0.0; // MATRIX
-    node0RedSphere.floats[6] = 0.0; // MATRIX
-    node0RedSphere.floats[7] = 0.0; // MATRIX
-    node0RedSphere.floats[8] = 0.0; // MATRIX
     node0RedSphere.floats[9] = 0.125; // radius
     scene->nodes[2] = node0RedSphere;
     
@@ -103,15 +90,6 @@
     node1GreenBoxCheap.functionHash = fTriPrismType;
     node1GreenBoxCheap.type = fBoxCheapType;
     node1GreenBoxCheap.materialId = 1;
-    node1GreenBoxCheap.floats[0] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[1] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[2] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[3] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[4] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[5] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[6] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[7] = 0.0; // MATRIX
-    node1GreenBoxCheap.floats[8] = 0.0; // MATRIX
     node1GreenBoxCheap.floats[9] = 0.105; // x dim
     node1GreenBoxCheap.floats[10] = 0.105; // y dim
     node1GreenBoxCheap.floats[11] = 0.105; // z dim
@@ -130,15 +108,6 @@
     node5RedSphere.functionHash = fTriPrismType;
     node5RedSphere.type = fSphereType;
     node5RedSphere.materialId = 0;
-    node5RedSphere.floats[0] = 0.0; // MATRIX
-    node5RedSphere.floats[1] = 0.0; // MATRIX
-    node5RedSphere.floats[2] = 0.0; // MATRIX
-    node5RedSphere.floats[3] = 0.0; // MATRIX
-    node5RedSphere.floats[4] = 0.0; // MATRIX
-    node5RedSphere.floats[5] = 0.0; // MATRIX
-    node5RedSphere.floats[6] = 0.0; // MATRIX
-    node5RedSphere.floats[7] = 0.0; // MATRIX
-    node5RedSphere.floats[8] = 0.0; // MATRIX
     node5RedSphere.floats[9] = 0.25; // radius
     scene->nodes[6] = node5RedSphere;
     
@@ -158,15 +127,6 @@
     node9GreenSphere.functionHash = fTriPrismType;
     node9GreenSphere.type = fSphereType;
     node9GreenSphere.materialId = 1;
-    node9GreenSphere.floats[0] = 0.0; // MATRIX
-    node9GreenSphere.floats[1] = 0.0; // MATRIX
-    node9GreenSphere.floats[2] = 0.0; // MATRIX
-    node9GreenSphere.floats[3] = 0.0; // MATRIX
-    node9GreenSphere.floats[4] = 0.0; // MATRIX
-    node9GreenSphere.floats[5] = 0.0; // MATRIX
-    node9GreenSphere.floats[6] = 0.0; // MATRIX
-    node9GreenSphere.floats[7] = 0.0; // MATRIX
-    node9GreenSphere.floats[8] = 0.0; // MATRIX
     node9GreenSphere.floats[9] = 0.15; // radius
     scene->nodes[9] = node9GreenSphere;
     
