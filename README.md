@@ -37,17 +37,25 @@ When the Demo app is launched the following scenes will be displayed for 10 seco
  
  SDF can fold space to generate multiple instances of an object, this is really cheap as it uses modulus to acheive this. The demo has an infinaite number of cubes with spherical holes, the limits of the scene are controlled by the maximum distance renderd by the camera.
 
+![Alt text](/SDFMetalDemoScene1.png?raw=true "3D Space Warping")
+
  2. Polar Space Warping
  
  A demo of space folding using polar coordinates rather then linear coordinates. A single object (cube minus sphere) is repeated 6 times around an origin.
+
+![Alt text](/SDFMetalDemoScene2.png?raw=true "Polar Space Warping")
 
  3. Blob
  
  Demonstrates objects with non planar surfaces.
 
+![Alt text](/SDFMetalDemoScene3.png?raw=true "The Blob")
+
  4. Primitives
  
  Demonstrates the wide range of SDF's supported, initially a port (in progress) of IQ's Signed Distance Bounds [demo on shadertoy](https://www.shadertoy.com/view/Xds3zN), will be updated as more functions are added).
+
+![Alt text](/SDFMetalDemoScene4.png?raw=true "Primitives")
 
 ## Known Issues
 
