@@ -13,10 +13,7 @@
 
 - (instancetype) initWithDevice: (_Nonnull id<MTLDevice>)device;
 
-//- (instancetype) initScene:(Scene *)scene withView: (MTKView * _Nonnull)view;
-
-- (void) renderSourceTexture:(id<MTLTexture>)sourceTexture
-        destinationTexture:(id<MTLTexture>)destinationTexture inView:(MTKView *) view toDrawable: (id <MTLDrawable>)drawable;
+- (void) renderToTexture:(id<MTLTexture>)texture inView:(MTKView *) view toDrawable: (id <MTLDrawable>)drawable;
         
 - (void) setupScene: (Scene *)scene;
 

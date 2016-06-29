@@ -48,7 +48,7 @@ static int const numFpsSamples = 16;
 	[self setupView];
 	
 	_sceneManager = [[MetalSceneManager alloc] initWithDevice:self.metalView.device];
-	
+    
 	
 	Scene *launchScene = [[ThreeDSpaceWarpingDemoScene alloc] init];
 	[self newScene: launchScene];
@@ -59,8 +59,6 @@ static int const numFpsSamples = 16;
     
     [self performSelector:@selector(newScene:) withObject:[[PrimitivesDemoScene alloc] init] afterDelay:30];
 
-	
-	//[self setupVilageto];
 }
 
 - (Scene *) newScene: (Scene *)scene {
@@ -102,9 +100,7 @@ static int const numFpsSamples = 16;
 #else
 - (void)render:(NSView *)view drawable:(id<CAMetalDrawable>)drawable {
 #endif
-
-	[_sceneManager renderSourceTexture:self.metalView.currentDrawable.texture
-	 destinationTexture:self.metalView.currentDrawable.texture inView: (MTKView *)view toDrawable: drawable];
+	[_sceneManager renderToTexture:self.metalView.currentDrawable.texture inView: (MTKView *)view toDrawable: drawable];
 }
 
 #pragma mark - MTKViewDelegate
@@ -145,7 +141,7 @@ static int const numFpsSamples = 16;
 #ifdef TARGET_IOS
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet <UITouch *> * allTouches = [event allTouches];
-	NSLog(@"touchesBegan() called with %lu touches",(unsigned long)allTouches.count);
+	//NSLog(@"touchesBegan() called with %lu touches",(unsigned long)allTouches.count);
 	
 	UITouch * t = [allTouches anyObject];
 	if (t != nil) {
@@ -156,13 +152,13 @@ static int const numFpsSamples = 16;
 }
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet <UITouch *> * allTouches = [event allTouches];
-	NSLog(@"touchesMoved() called with %lu touches",(unsigned long)allTouches.count);
+	//NSLog(@"touchesMoved() called with %lu touches",(unsigned long)allTouches.count);
 }
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSLog(@"touchesEnded() called");
+	//NSLog(@"touchesEnded() called");
 }
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSLog(@"touchesCancelled() called");
+	//NSLog(@"touchesCancelled() called");
 }
 #else
     -(void)mouseDown:(NSEvent *)theEvent {

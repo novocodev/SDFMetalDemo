@@ -23,14 +23,12 @@ typedef struct SDFHit {
 } SDFHit;
 
 
-@interface SignedDistanceBoundsPerformanceShader : NSObject //: MPSUnaryImageKernel
+@interface SignedDistanceBoundsPerformanceShader : NSObject
 
 
 - (_Nonnull instancetype) initWithDevice:(_Nonnull id<MTLDevice>)device;
 
-//- (void) useKernel:(NSString * _Nonnull)kernelName kernelUniformBuffer:(void *)buffer error:(__autoreleasing NSError ** _Nullable)error;
-
-- (void) useKernel:(NSString * _Nonnull)kernelName fromLibrary:(id<MTLLibrary>) library uniformBuffer:(void *)uniformBuffer error:(__autoreleasing NSError ** _Nullable)error;
+- (void) updatePipeline:(id<MTLComputePipelineState>) computePipeline hitPipeline:(id<MTLComputePipelineState>) hitPipeline;
 
 
 - (NSString *) kernelName;
@@ -38,18 +36,10 @@ typedef struct SDFHit {
 - (void) uniformBuffer:(const void *)buffer bufferSize:(NSInteger )size;
 
 - (void)encodeToCommandBuffer:(_Nonnull id<MTLCommandBuffer>)commandBuffer
-                sourceTexture:(_Nonnull id<MTLTexture>)sourceTexture
            destinationTexture:(_Nonnull id<MTLTexture>)destinationTexture;
 
 - (void)encodeToCommandBuffer:(_Nonnull id<MTLCommandBuffer>)commandBuffer
                       touches:(SDFTouch) point hits: (SDFHit *) hit;
-
-/*
-- (BOOL)encodeToCommandBuffer:(_Nonnull id<MTLCommandBuffer>)commandBuffer
-               inPlaceTexture:(_Nonnull id<MTLTexture>  * _Nonnull)texture
-        fallbackCopyAllocator:(_Nullable MPSCopyAllocator)copyAllocator;
-*/
-
 
 @property (nonatomic, assign) float deviceAttitudePitch;
 @property (nonatomic, assign) float deviceAttitudeRoll;

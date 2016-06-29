@@ -5,138 +5,6 @@
 namespace staticshader {
 
 	using namespace metal;
-	
-////////////////////////////////////////////////////////////////
-//
-//                           HG_SDF
-//
-//     GLSL LIBRARY FOR BUILDING SIGNED DISTANCE BOUNDS
-//
-//     version 2016-01-10
-//
-//     Check http://mercury.sexy/hg_sdf for updates
-//     and usage examples. Send feedback to spheretracing@mercury.sexy.
-//
-//     Brought to you by MERCURY http://mercury.sexy
-//
-//
-//
-// Released as Creative Commons Attribution-NonCommercial (CC BY-NC)
-//
-////////////////////////////////////////////////////////////////
-//
-// How to use this:
-//
-// 1. Build some system to #include glsl files in each other.
-//   Include this one at the very start. Or just paste everywhere.
-// 2. Build a sphere tracer. See those papers:
-//   * "Sphere Tracing" http://graphics.cs.illinois.edu/sites/default/files/zeno.pdf
-//   * "Enhanced Sphere Tracing" http://lgdv.cs.fau.de/get/2234
-//   The Raymnarching Toolbox Thread on pouet can be helpful as well
-//   http://www.pouet.net/topic.php?which=7931&page=1
-//   and contains links to many more resources.
-// 3. Use the tools in this library to build your distance bound f().
-// 4. ???
-// 5. Win a compo.
-//
-// (6. Buy us a beer or a good vodka or something, if you like.)
-//
-////////////////////////////////////////////////////////////////
-//
-// Table of Contents:
-//
-// * Helper functions and macros
-// * Collection of some primitive objects
-// * Domain Manipulation operators
-// * Object combination operators
-//
-////////////////////////////////////////////////////////////////
-//
-// Why use this?
-//
-// The point of this lib is that everything is structured according
-// to patterns that we ended up using when building geometry.
-// It makes it more easy to write code that is reusable and that somebody
-// else can actually understand. Especially code on Shadertoy (which seems
-// to be what everybody else is looking at for "inspiration") tends to be
-// really ugly. So we were forced to do something about the situation and
-// release this lib ;)
-//
-// Everything in here can probably be done in some better way.
-// Please experiment. We'd love some feedback, especially if you
-// use it in a scene production.
-//
-// The main patterns for building geometry this way are:
-// * Stay Lipschitz continuous. That means: don't have any distance
-//   gradient larger than 1. Try to be as close to 1 as possible -
-//   Distances are euclidean distances, don't fudge around.
-//   Underestimating distances will happen. That's why calling
-//   it a "distance bound" is more correct. Don't ever multiply
-//   distances by some value to "fix" a Lipschitz continuity
-//   violation. The invariant is: each fSomething() function returns
-//   a correct distance bound.
-// * Use very few primitives and combine them as building blocks
-//   using combine opertors that preserve the invariant.
-// * Multiply objects by repeating the domain (space).
-//   If you are using a loop inside your distance function, you are
-//   probably doing it wrong (or you are building boring fractals).
-// * At right-angle intersections between objects, build a new local
-//   coordinate system from the two distances to combine them in
-//   interesting ways.
-// * As usual, there are always times when it is best to not follow
-//   specific patterns.
-//
-////////////////////////////////////////////////////////////////
-//
-// FAQ
-//
-// Q: Why is there no sphere tracing code in this lib?
-// A: Because our system is way too complex and always changing.
-//    This is the constant part. Also we'd like everyone to
-//    explore for themselves.
-//
-// Q: This does not work when I paste it into Shadertoy!!!!
-// A: Yes. It is GLSL, not GLSL ES. We like real OpenGL
-//    because it has way more features and is more likely
-//    to work compared to browser-based WebGL. We recommend
-//    you consider using OpenGL for your productions. Most
-//    of this can be ported easily though.
-//
-// Q: How do I material?
-// A: We recommend something like this:
-//    Write a material ID, the distance and the local coordinate
-//    p into some global variables whenever an object's distance is
-//    smaller than the stored distance. Then, at the end, evaluate
-//    the material to get color, roughness, etc., and do the shading.
-//
-// Q: I found an error. Or I made some function that would fit in
-//    in this lib. Or I have some suggestion.
-// A: Awesome! Drop us a mail at spheretracing@mercury.sexy.
-//
-// Q: Why is this not on github?
-// A: Because we were too lazy. If we get bugged about it enough,
-//    we'll do it.
-//
-// Q: Your license sucks for me.
-// A: Oh. What should we change it to?
-//
-// Q: I have trouble understanding what is going on with my distances.
-// A: Some visualization of the distance field helps. Try drawing a
-//    plane that you can sweep through your scene with some color
-//    representation of the distance field at each point and/or iso
-//    lines at regular intervals. Visualizing the length of the
-//    gradient (or better: how much it deviates from being equal to 1)
-//    is immensely helpful for understanding which parts of the
-//    distance field are broken.
-//
-////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////
-//
-//             HELPER FUNCTIONS/MACROS
-//
-////////////////////////////////////////////////////////////////
 
 	typedef float2 vec2;
 	typedef float3 vec3;
@@ -219,25 +87,6 @@ namespace staticshader {
 	float vmin(vec4 v) {
 		return min(min(v.x, v.y), min(v.z, v.w));
 	}
-	
-	
-	
-	
-////////////////////////////////////////////////////////////////
-//
-//             PRIMITIVE DISTANCE FUNCTIONS
-//
-////////////////////////////////////////////////////////////////
-//
-// Conventions:
-//
-// Everything that is a distance function is called fSomething.
-// The first argument is always a point in 2 or 3-space called <p>.
-// Unless otherwise noted, (if the object has an intrinsic "up"
-// side or direction) the y axis is "up" and the object is
-// centered at the origin.
-//
-////////////////////////////////////////////////////////////////
 
 	float fSphere(vec3 p, float r);
 	float fSphere(vec3 p, float r) {
@@ -485,33 +334,7 @@ namespace staticshader {
 	   float fTruncatedIcosahedron(vec3 p, float r) {
 	        return fGDF(p, r, 3, 18);
 	   }
-	   
-////////////////////////////////////////////////////////////////
-//
-//                DOMAIN MANIPULATION OPERATORS
-//
-////////////////////////////////////////////////////////////////
-//
-// Conventions:
-//
-// Everything that modifies the domain is named pSomething.
-//
-// Many operate only on a subset of the three dimensions. For those,
-// you must choose the dimensions that you want manipulated
-// by supplying e.g. <p.x> or <p.zx>
-//
-// <inout p> is always the first argument and modified in place.
-//
-// Many of the operators partition space into cells. An identifier
-// or cell index is returned, if possible. This return value is
-// intended to be optionally used e.g. as a random seed to change
-// parameters of the distance functions inside the cells.
-//
-// Unless stated otherwise, for cell index 0, <p> is unchanged and cells
-// are centered on the origin so objects don't have to be moved to fit.
-//
-//
-////////////////////////////////////////////////////////////////
+
 
 /*
  * Implements GLSL mod
@@ -625,8 +448,8 @@ vec3 mod(vec3 x, vec3 y)
 	
 // Repeat around the origin by a fixed angle.
 // For easier use, num of repetitions is use to specify the angle.
-	float pModPolar(thread vec3 &p, int axis1, int axis2, float repetitions);
-	float pModPolar(thread vec3 &p, int axis1, int axis2, float repetitions) {
+	vec3 pModPolar(thread vec3 &p, int axis1, int axis2, float repetitions);
+	vec3 pModPolar(thread vec3 &p, int axis1, int axis2, float repetitions) {
 		float angle = 2*PI/repetitions;
 		float a = atan2(p[axis2], p[axis1]) + angle/2.;
 		float r = length(vec2(p[axis1],p[axis2]));
@@ -638,7 +461,7 @@ vec3 mod(vec3 x, vec3 y)
 // For an odd number of repetitions, fix cell index of the cell in -x direction
 // (cell index would be e.g. -5 and 5 in the two halves of the cell):
 		if (abs(c) >= (repetitions/2)) c = abs(c);
-		return c;
+		return vec3(c,0,0);
 	}
 	
 	
@@ -718,62 +541,6 @@ vec3 mod(vec3 x, vec3 y)
 		return sgn(t);
 	}
 	
-	
-////////////////////////////////////////////////////////////////
-//
-//             OBJECT COMBINATION OPERATORS
-//
-////////////////////////////////////////////////////////////////
-//
-// We usually need the following boolean operators to combine two objects:
-// Union: OR(a,b)
-// Intersection: AND(a,b)
-// Difference: AND(a,!b)
-// (a and b being the distances to the objects).
-//
-// The trivial implementations are min(a,b) for union, max(a,b) for intersection
-// and max(a,-b) for difference. To combine objects in more interesting ways to
-// produce rounded edges, chamfers, stairs, etc. instead of plain sharp edges we
-// can use combination operators. It is common to use some kind of "smooth minimum"
-// instead of min(), but we don't like that because it does not preserve Lipschitz
-// continuity in many cases.
-//
-// Naming convention: since they return a distance, they are called fOpSomething.
-// The different flavours usually implement all the boolean operators above
-// and are called fOpUnionRound, fOpIntersectionRound, etc.
-//
-// The basic idea: Assume the object surfaces intersect at a right angle. The two
-// distances <a> and <b> constitute a new local two-dimensional coordinate system
-// with the actual intersection as the origin. In this coordinate system, we can
-// evaluate any 2D distance function we want in order to shape the edge.
-//
-// The operators below are just those that we found useful or interesting and should
-// be seen as examples. There are infinitely more possible operators.
-//
-// They are designed to actually produce correct distances or distance bounds, unlike
-// popular "smooth minimum" operators, on the condition that the gradients of the two
-// SDFs are at right angles. When they are off by more than 30 degrees or so, the
-// Lipschitz condition will no longer hold (i.e. you might get artifacts). The worst
-// case is parallel surfaces that are close to each other.
-//
-// Most have a float argument <r> to specify the radius of the feature they represent.
-// This should be much smaller than the object size.
-//
-// Some of them have checks like "if ((-a < r) && (-b < r))" that restrict
-// their influence (and computation cost) to a certain area. You might
-// want to lift that restriction or enforce it. We have left it as comments
-// in some cases.
-//
-// usage example:
-//
-// float fTwoBoxes(vec3 p) {
-//   float box0 = fBox(p, vec3(1));
-//   float box1 = fBox(p-vec3(1), vec3(1));
-//   return fOpUnionChamfer(box0, box1, 0.2);
-// }
-//
-////////////////////////////////////////////////////////////////
-
 
 // The "Chamfer" flavour makes a 45-degree chamfered edge (the diagonal of a square of size <r>):
 	float fOpUnionChamfer(float a, float b, float r);
@@ -939,21 +706,6 @@ vec3 mod(vec3 x, vec3 y)
  */
  
  
-////////////////////////////////////////////////////////////////
-//
-//             PRIMITIVE DISTANCE FUNCTIONS
-//
-////////////////////////////////////////////////////////////////
-//
-// Conventions:
-//
-// Everything that is a distance function is called fSomething.
-// The first argument is always a point in 2 or 3-space called &lt;p&gt;.
-// Unless otherwise noted, (if the object has an intrinsic "up"
-// side or direction) the y axis is "up" and the object is
-// centered at the origin.
-//
-////////////////////////////////////////////////////////////////
 
 	float fEllipsoid( vec3 p, vec3 r );
 	float fEllipsoid( vec3 p, vec3 r )
@@ -1029,16 +781,19 @@ vec3 mod(vec3 x, vec3 y)
 	}
 	
 //Union that only checks vector.x, this is used as primitives .y is not part of a true vector
-	vec2 pU( vec2 d1, vec2 d2 );
-	vec2 pU( vec2 d1, vec2 d2 )
+	vec3 pU( vec3 d1, vec3 d2 );
+	vec3 pU( vec3 d1, vec3 d2 )
 	{
 		return (d1.x<d2.x) ? d1 : d2;
 	}
 	
-vec2 pS( vec2 d1, vec2 d2, float nodeId);
-vec2 pS( vec2 d1, vec2 d2, float nodeId)
+
+vec3 pS( vec3 d1, vec3 d2);
+vec3 pS( vec3 d1, vec3 d2)
 {
-return vec2(max(-d2.x,d1.x), nodeId);
+    //return vec3(max(-d2.x,d1.x), d1.y, d1.z);
+
+    return (-d2.x>d1.x) ? vec3(-d2.x, d2.yz) : d1;
 }
 
 // The "Round" variant uses a quarter-circle to join the two objects smoothly:
@@ -1074,151 +829,25 @@ return vec2(max(-d2.x,d1.x), nodeId);
 		return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);
 	}
 	
-	
-////////////////////////////////////////////////////////////////
-//
-//                DOMAIN MANIPULATION OPERATORS
-//
-////////////////////////////////////////////////////////////////
-//
-// Conventions:
-//
-// Everything that modifies the domain is named pSomething.
-//
-// Many operate only on a subset of the three dimensions. For those,
-// you must choose the dimensions that you want manipulated
-// by supplying e.g. <p.x> or <p.zx>
-//
-// &lt;inout p&gt; is always the first argument and modified in place.
-//
-// Many of the operators partition space into cells. An identifier
-// or cell index is returned, if possible. This return value is
-// intended to be optionally used e.g. as a random seed to change
-// parameters of the distance functions inside the cells.
-//
-// Unless stated otherwise, for cell index 0, &lt;p&gt; is unchanged and cells
-// are centered on the origin so objects don't have to be moved to fit.
-//
-//
-////////////////////////////////////////////////////////////////
 
-
-////////////////////////////////////////////////////////////////
-//
-//             OBJECT COMBINATION OPERATORS
-//
-////////////////////////////////////////////////////////////////
-//
-// We usually need the following boolean operators to combine two objects:
-// Union: OR(a,b)
-// Intersection: AND(a,b)
-// Difference: AND(a,!b)
-// (a and b being the distances to the objects).
-//
-// The trivial implementations are min(a,b) for union, max(a,b) for intersection
-// and max(a,-b) for difference. To combine objects in more interesting ways to
-// produce rounded edges, chamfers, stairs, etc. instead of plain sharp edges we
-// can use combination operators. It is common to use some kind of "smooth minimum"
-// instead of min(), but we don't like that because it does not preserve Lipschitz
-// continuity in many cases.
-//
-// Naming convention: since they return a distance, they are called fOpSomething.
-// The different flavours usually implement all the boolean operators above
-// and are called fOpUnionRound, fOpIntersectionRound, etc.
-//
-// The basic idea: Assume the object surfaces intersect at a right angle. The two
-// distances &lt;a&gt; and &lt;b&gt; constitute a new local two-dimensional coordinate system
-// with the actual intersection as the origin. In this coordinate system, we can
-// evaluate any 2D distance function we want in order to shape the edge.
-//
-// The operators below are just those that we found useful or interesting and should
-// be seen as examples. There are infinitely more possible operators.
-//
-// They are designed to actually produce correct distances or distance bounds, unlike
-// popular "smooth minimum" operators, on the condition that the gradients of the two
-// SDFs are at right angles. When they are off by more than 30 degrees or so, the
-// Lipschitz condition will no longer hold (i.e. you might get artifacts). The worst
-// case is parallel surfaces that are close to each other.
-//
-// Most have a float argument &lt;r&gt; to specify the radius of the feature they represent.
-// This should be much smaller than the object size.
-//
-// Some of them have checks like "if ((-a &lt; r) &amp;&amp; (-b &lt; r))" that restrict
-// their influence (and computation cost) to a certain area. You might
-// want to lift that restriction or enforce it. We have left it as comments
-// in some cases.
-//
-// usage example:
-//
-// float fTwoBoxes(vec3 p) {
-//   float box0 = fBox(p, vec3(1));
-//   float box1 = fBox(p-vec3(1), vec3(1));
-//   return fOpUnionChamfer(box0, box1, 0.2);
-// }
-//
-////////////////////////////////////////////////////////////////
 
 /*
  * END OF Ported Primitives
  */
 
-    enum nodeType {
-        fPlaneType = 1,
-        fSphereType = 2,
-        fBoxCheapType = 3,
-        fRoundBoxType = 4,
-        fTorusType = 5,
-        fTorus82Type = 6,
-        fTorus88Type = 7,
-        fCapsuleType = 8,
-        fTriPrismType = 9,
-        fCylinderType = 10,
-        fCylinder6Type = 11,
-        fConeType = 12,
-        fOctahedronType = 13,
-        fEllipsoidType = 14,
-        fHexagonIncircleType = 15,
-        fBlobType = 16,
-        pUnionType = 17,
-        pSubtractionType = 18,
-        pModOffsetType = 19,
-        pModRotateType = 20,
-        pModPolarType = 21,
-        pModResetType = 22,
-        pMod3Type = 23
+    struct SDFMaterial {
+        vec3 diffuse;
+        vec3 specular;
+        vec3 ambient;
+        vec3 dome;
+        vec3 bac;
+        vec3 frensel;
     };
-
-	struct SDFMaterial {
-		float red;
-		float green;
-		float blue;
-		float alpha;
-	};
-
-	struct SDFNode {
-		size_t functionHash;
-		enum nodeType type;
-		unsigned char flags;
-		float materialId;
-		float4x4 transform;
-		int ints[32];
-		float floats[32];
-	};
-	
-	struct SDFScene {
-		float modelVersion;
-		mat3 cameraTransform;
-		vec3 rayOrigin;
-		uint nodeCount;
-		struct SDFMaterial materials[10];
-		struct SDFNode nodes[60];
-	};
 
     struct SDFUniforms {
         float modelVersion;
         mat3 cameraTransform;
         vec3 rayOrigin;
-        uint nodeCount;
     };
 
 	struct Stack {
@@ -1243,83 +872,41 @@ return vec2(max(-d2.x,d1.x), nodeId);
 	vec2 pop(thread Stack &s) {
 		return s.stack[--s.count];
 	}
-	
-	
+
+    //Template for in-lined materials
+    constant SDFMaterial materials[%i] = {
+        %@
+    };
+
 //NEW DISTANCE FUNCTIONS
 
-	vec2 spfSphere(vec3 p, SDFNode n, uint nodeId);
-	vec2 spfSphere(vec3 p, SDFNode n, uint nodeId) {
-		return vec2(length(p) - n.floats[9],nodeId);
-	}
-	
-// Cheap Box: distance to corners is overestimated
-	vec2 spfBoxCheap(vec3 p, SDFNode n, uint nodeId);
-	vec2 spfBoxCheap(vec3 p, SDFNode n, uint nodeId) { //cheap box
-		return vec2(vmax(abs(p) - vec3(n.floats[9],n.floats[10],n.floats[11])),nodeId);
-	}
-	
-	vec2 sppU( vec2 d1, vec2 d2 );
-	vec2 sppU( vec2 d1, vec2 d2 )
-	{
-		return (d1.x<d2.x) ? d1 : d2;
-	}
-	
-	vec2 sppS( vec2 d1, vec2 d2, SDFNode n, uint nodeId);
-	vec2 sppS( vec2 d1, vec2 d2, SDFNode n, uint nodeId)
-	{
-		return vec2(max(-d2.x,d1.x), nodeId);
-	}
-	
-	void pModOffset( thread vec3 &p, vec3 offset);
-	void pModOffset( thread vec3 &p, vec3 offset) {
-		p -= offset;
-	}
-	
-	void sppModOffset( thread vec3 &p, SDFNode n);
-	void sppModOffset( thread vec3 &p, SDFNode n) {
-		p -= vec3(n.floats[0],n.floats[1],n.floats[2]);
-	}
-	
-// Repeat around the origin by a fixed angle.
-// For easier use, num of repetitions is use to specify the angle.
-	float sppModPolar( thread vec2 &p, SDFNode n);
-	float sppModPolar( thread vec2 &p, SDFNode n) {
-	
-		float repetitions = n.floats[0];
-		float angle = 2*PI/repetitions;
-		float a = fma(angle,0.5,atan2(p.y, p.x));
-		float r = length(p);
-		float c = floor(a/angle);
-		
-		a = fma(angle,-0.5,mod(a,angle));
-		p = vec2(cos(a), sin(a))*r;
-// For an odd number of repetitions, fix cell index of the cell in -x direction
-// (cell index would be e.g. -5 and 5 in the two halves of the cell):
-		if (abs(c) >= (repetitions/2)) c = abs(c);
-		return c;
-	}
-	
-	
+
+    void pModOffset( thread vec3 &p, vec3 offset);
+    void pModOffset( thread vec3 &p, vec3 offset) {
+        p -= offset;
+    }
+
 //Static distance functions for scene
 //Ferformance is non optimal, minimum number of distance
 //functions should be processed here
-	vec2 map( vec3 pos);
-	vec2 map( vec3 pos)
+	vec3 map( vec3 pos);
+	vec3 map( vec3 pos)
 	{
 		vec3 origPos = pos;
-        vec2 res;
-        float cell;
-        vec2 cells2;
-        vec3 cells3;
-        
+        vec3 res = vec3(0);
+        vec3 cells = vec3(0);
+
+        //Template for Signed Distance Function for this scene
         %@
-        
+
+        origPos = origPos;
+        cells = cells;
 		return res;
 	}
 	
 	
-	vec2 castRay( vec3 ro, vec3 rd);
-	vec2 castRay( vec3 ro, vec3 rd)
+	vec3 castRay( vec3 ro, vec3 rd);
+	vec3 castRay( vec3 ro, vec3 rd)
 	{
         const int maxIterations = 256;
 		float tmin = 0.1;
@@ -1327,19 +914,24 @@ return vec2(max(-d2.x,d1.x), nodeId);
 		float precis = 0.000001;
 		float t = tmin;
 		float m = -1.0;
+        float o = -1.0;
 		int i = 0;
 		for(; i<maxIterations; i++ )
 		{
-			vec2 res = map( fma(rd,t,ro));
-			if( res.x<precis || t>tmax ) break;
+			vec3 res = map( fma(rd,t,ro));
+            //if( res.x<precis || t>tmax ) {
+            if( res.x<precis ) {
+                o = res.y;
+                m = res.z;
+                break;
+            }
+            if(t>tmax ) break;
 			t += res.x;
-			m = res.y;
+
 		}
-
-        if( i == maxIterations) m=-1.0;
-		return vec2( t, m );
+		return vec3( t, o, m );
 	}
-
+/*
     vec2 castRayRelaxed( vec3 ro, vec3 rd);
     vec2 castRayRelaxed( vec3 ro, vec3 rd)
     {
@@ -1364,7 +956,7 @@ return vec2(max(-d2.x,d1.x), nodeId);
         float m = -1.0;
 
         for (int i = 0; i < MAX_ITERATIONS; ++i) {
-            vec2 res = map( fma(rd,t,ro));
+            vec3 res = map( fma(rd,t,ro));
             float signedRadius = functionSign * res.x;
             float radius = abs(signedRadius);
 
@@ -1399,7 +991,7 @@ return vec2(max(-d2.x,d1.x), nodeId);
 
         return vec2( candidate_t, m );
     }
-
+*/
 
 
 	float softshadow( vec3 ro, vec3 rd, float mint, float tmax);
@@ -1454,14 +1046,14 @@ return vec2(max(-d2.x,d1.x), nodeId);
 		return clamp( fma(-3.0,occ,1.0 ), 0.0, 1.0 );
 	}
 	
-	vec3 render( vec3 ro, vec3 rd, device SDFScene &scene);
-	vec3 render( vec3 ro, vec3 rd, device SDFScene &scene)
+	vec3 render( vec3 ro, vec3 rd, constant SDFUniforms &scene);
+	vec3 render( vec3 ro, vec3 rd, constant SDFUniforms &scene)
 	{
 	
 //Set default background colour
 		vec3 col = fma(rd.y,0.8,vec3(0.7, 0.6, 0.7));
 		
-		vec2 res = castRay(ro,rd);
+		vec3 res = castRay(ro,rd);
 
         //vec2 res = castRayRelaxed(ro,rd);
 
@@ -1470,8 +1062,7 @@ return vec2(max(-d2.x,d1.x), nodeId);
 		{
 		
 			float t = res.x;
-			int m = scene.nodes[int(res.y)].materialId;
-			
+            int m = res.z;
 //Position of the ray hit
 			vec3 pos = fma(t,rd,ro);
 			
@@ -1481,13 +1072,12 @@ return vec2(max(-d2.x,d1.x), nodeId);
 			vec3 ref = reflect( rd, nor );
 			
 // material
-			col = vec3(scene.materials[m].red, scene.materials[m].green, scene.materials[m].blue);
-            //col = vec3(0.5, 0.7, 0.8);
+            col = vec3(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
             
-// lighitng
+//ambient occlusion
 			float occ = calcAO( pos, nor);
 			
-//Light direction?
+//Light direction
 			vec3 lig = normalize( vec3(-0.6, 0.7, -0.5) );
 			
 //Ambient
@@ -1495,10 +1085,13 @@ return vec2(max(-d2.x,d1.x), nodeId);
 			
 //Diffuse
 			float dif = clamp( dot( nor, lig ), 0.0, 1.0 );
+
+
 			float bac = clamp( dot( nor, normalize(vec3(-lig.x,0.0,-lig.z))), 0.0, 1.0 )*clamp( 1.0-pos.y,0.0,1.0);
-//Sky dome?
+//Sky dome
 			float dom = smoothstep( -0.1, 0.1, ref.y );
-			
+
+//Frensel component of reflections
 			float fre = pow( clamp(1.0+dot(nor,rd),0.0,1.0), 2.0 );
 			
 //Specular
@@ -1508,14 +1101,16 @@ return vec2(max(-d2.x,d1.x), nodeId);
 			dom *= softshadow( pos, ref, 0.02, 2.5);
 			
 			vec3 lin = vec3(0.0);
-			lin += 1.20*dif*vec3(1.00,0.85,0.55);
-			lin += 1.20*spe*vec3(1.00,0.85,0.55)*dif;
-			lin += 0.20*amb*vec3(0.50,0.70,1.00)*occ;
-			lin += 0.30*dom*vec3(0.50,0.70,1.00)*occ;
-			lin += 0.30*bac*vec3(0.25,0.25,0.25)*occ;
-			lin += 0.40*fre*vec3(1.00,1.00,1.00)*occ;
+
+            lin += 1.20*dif*materials[m].diffuse;
+            lin += 1.20*spe*materials[m].specular*dif;
+            lin += 0.20*amb*materials[m].ambient*occ;
+            lin += 0.30*dom*materials[m].dome*occ;
+            lin += 0.30*bac*materials[m].bac*occ;
+            lin += 0.40*fre*materials[m].frensel*occ;
+
 			col = col*lin;
-			
+
 			col = mix( col, vec3(0.8,0.9,1.0), 1.0-exp( -0.002*t*t ) );
 			
 		}
@@ -1534,9 +1129,9 @@ return vec2(max(-d2.x,d1.x), nodeId);
 	}
 	
 	
-	kernel void static_signed_distance_bounds(
+	kernel void signed_distance_bounds(
 	        texture2d<float, access::write> outTexture [[texture(0)]],
-	        device SDFScene &scene [[buffer(0)]],
+            constant SDFUniforms &uniforms [[buffer(0)]],
 	        uint2 gid [[thread_position_in_grid]])
 	{
 		vec2 fragCoord = {(float)gid[0], (float)gid[1]};
@@ -1546,9 +1141,9 @@ return vec2(max(-d2.x,d1.x), nodeId);
 		vec2 p = fma(2.0,q,-1.0);
 		p.x *= iResolution.x/iResolution.y;
 		
-		vec3 rd = scene.cameraTransform * normalize( vec3(p.xy,2.0) );
+		vec3 rd = uniforms.cameraTransform * normalize( vec3(p.xy,2.0) );
 		
-		vec3 col = render( scene.rayOrigin, rd,scene);
+		vec3 col = render( uniforms.rayOrigin, rd, uniforms);
 		
 		col = pow( col, vec3(0.4545) );
 		
@@ -1573,13 +1168,12 @@ return vec2(max(-d2.x,d1.x), nodeId);
     };
 
 
-    kernel void static_signed_distance_bounds_hit_test(
-        constant SDFScene &scene [[buffer(0)]],
+    kernel void signed_distance_bounds_hit_test(
+        constant SDFUniforms &uniforms [[buffer(0)]],
         constant SDFTouch &touch [[buffer(1)]],
         device SDFHit &hit [[buffer(2)]],
         uint2 gid [[thread_position_in_grid]])
     {
-
         vec2 fragCoord = {(float)touch.touchPointX, (float)touch.touchPointY};
         vec2 iResolution = vec2(touch.viewWidth,touch.viewHeight);
 
@@ -1587,12 +1181,10 @@ return vec2(max(-d2.x,d1.x), nodeId);
         vec2 p = fma(2.0,q,-1.0);
         p.x *= iResolution.x/iResolution.y;
 
-        vec3 rd = scene.cameraTransform * normalize( vec3(p.xy,2.0) );
+        vec3 rd = uniforms.cameraTransform * normalize( vec3(p.xy,2.0) );
 
-        vec3 ro = scene.rayOrigin;
-        vec2 res = castRay(ro,rd);
-
-//vec2 res = vec2(1.0, -1.0);
+        vec3 ro = uniforms.rayOrigin;
+        vec3 res = castRay(ro,rd);
 
         if(res.y == -1.0) {
             hit.isHit = false;
@@ -1601,7 +1193,6 @@ return vec2(max(-d2.x,d1.x), nodeId);
             hit.hitPointX = res.x;
             hit.hitNodeId = int(res.y);
         }
-
     }
 
 

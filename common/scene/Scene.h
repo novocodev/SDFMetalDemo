@@ -5,7 +5,6 @@
 @import simd;
 @import Metal;
 
-
 enum nodeType {
     fPlaneType = 1,
     fSphereType = 2,
@@ -33,11 +32,14 @@ enum nodeType {
 };
 
 typedef struct SDFMaterial {
-    float red;
-    float green;
-    float blue;
-    float alpha;
+    vector_float3 diffuse;
+    vector_float3 specular;
+    vector_float3 ambient;
+    vector_float3 dome;
+    vector_float3 bac;
+    vector_float3 frensel;
 } SDFMaterial;
+
 
 typedef struct SDFNode {
     unsigned long functionHash;
@@ -53,8 +55,9 @@ typedef struct SDFScene {
     float modelVersion;
     matrix_float3x3 cameraTransform;
     vector_float3 rayOrigin;
-    uint nodeCount;
+    uint materialCount;
     struct SDFMaterial materials[10];
+    uint nodeCount;
     struct SDFNode nodes[60];
 } SDFScene;
 
@@ -63,14 +66,12 @@ typedef struct SDFUniforms {
     float modelVersion;
     matrix_float3x3 cameraTransform;
     vector_float3 rayOrigin;
-    uint nodeCount;
 } SDFUniforms;
 
 @protocol SceneDelegate;
 
 @interface Scene : NSObject
 
-@property (nonatomic, readonly) NSString *kernelName;
 @property (nonatomic, readonly) float targetFramerate;
 @property (nonatomic, readonly) BOOL supportsPicking;
 @property (nonatomic, retain) id <SceneDelegate> delegate;
@@ -79,7 +80,7 @@ typedef struct SDFUniforms {
 - (instancetype) initWithTargetFramerate:(float)tfr supportsPicking:(BOOL)supportsPicking;
 
 - (void) setupScene: (SDFScene *)scene;
-- (BOOL) updateScene: (SDFScene *) scene atMediaTime:(float)mediaTime;
+- (void) updateScene: (SDFScene *) scene atMediaTime:(float)mediaTime;
 
 - (void) nodeSelected:(uint) nodeId inScene:(SDFScene *)scene;
 

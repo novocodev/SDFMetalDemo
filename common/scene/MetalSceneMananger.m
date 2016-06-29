@@ -10,6 +10,10 @@
 #ifndef TARGET_IOS
 #import "MTKView+ContentScaleFactor.h"
 #endif
+
+const NSString *kComputeKernelName = @"signed_distance_bounds";
+const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
+
 @implementation MetalSceneManager
 {
 	dispatch_queue_t _clientRequestQueue;
@@ -58,53 +62,33 @@
 
 - (void) setupShader {
 	_sdf = [[SignedDistanceBoundsPerformanceShader alloc] initWithDevice:_device];
+    [_sdf uniformBuffer:_uniformBuffer bufferSize:sizeof(struct SDFUniforms)];
 }
 
 - (void) setupScene: (Scene *)scene {
 	//Add to client request queue
-	dispatch_async(_clientRequestQueue, ^{
+	dispatch_sync(_clientRequestQueue, ^{
 		_currentScene = scene;
         _currentScene.delegate = self;
 		_mediaStartTime = CACurrentMediaTime();
-		NSError *error;
 		
         [scene setupScene:_uniformBuffer];
-        
-        NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
-        NSString *source;
-        @autoreleasepool {
-            source = [NSString stringWithFormat:_template, func];
-        }
-
-        id <MTLLibrary> library = [_device newLibraryWithSource:source options:nil error:&error];
-        
-        if(error != nil) {
-            NSLog(@"library error = %@",error);
-        }
-        
-        [ _sdf useKernel:[@"static_" stringByAppendingString:_currentScene.kernelName] fromLibrary:library uniformBuffer:_uniformBuffer error:&error];
-		
-		NSLog(@"Scene setup for kernel %@",_currentScene.kernelName);
+        dispatch_sync(_shaderJITQueue , ^{
+            [self compileAndPushShader: scene];
+        });
 	});
 }
 
-- (void) renderSourceTexture:(id<MTLTexture>)sourceTexture
-        destinationTexture:(id<MTLTexture>)destinationTexture inView:(MTKView *) view toDrawable: (id <MTLDrawable>)drawable {
-	//Occasionally we get width/height of 0/0 or drawable nil which causes the kernel to throw an error
-	//catch here and skip this frame
-	if(destinationTexture.width == 0 || destinationTexture.height == 0 || drawable == nil) {
-		return;
-	}
+- (void) renderToTexture:(id<MTLTexture>)texture inView:(MTKView *) view toDrawable: (id <MTLDrawable>)drawable {
 	
 	//Add to client request queue
 	dispatch_sync(_clientRequestQueue, ^{
-
-        BOOL updatedSceneContent = [_currentScene updateScene:_uniformBuffer atMediaTime:(CACurrentMediaTime() - _mediaStartTime)];
+        [_currentScene updateScene:_uniformBuffer atMediaTime:(CACurrentMediaTime() - _mediaStartTime)];
         
 		// Create a new command buffer for each renderpass to the current drawable.
 		id<MTLCommandBuffer> commandBuffer = [_metalCommandQueue commandBuffer];
 		
-		[_sdf encodeToCommandBuffer:commandBuffer sourceTexture:sourceTexture destinationTexture:destinationTexture];
+		[_sdf encodeToCommandBuffer:commandBuffer destinationTexture:texture];
 		
 		// Schedule a present using the current drawable.
 		[commandBuffer presentDrawable:drawable];
@@ -119,12 +103,11 @@
 
 
 - (void) hitTestWithPoint: (CGPoint) point inView:(MTKView *) view initialViewScale:(float) initialViewScale {
-//Add to client request queue
 
 	if (!_currentScene.supportsPicking) {
 		return;
 	}
-	dispatch_sync(_clientRequestQueue, ^{
+	dispatch_async(_clientRequestQueue, ^{
 
         SDFTouch touch;
 
@@ -145,17 +128,11 @@
 		hit = hbuffer;
 		
 		[_sdf encodeToCommandBuffer:commandBuffer touches:touch hits: hit];
-        
-		// Finalize command buffer.
+
 		[commandBuffer commit];
 		
 		//Block until the hit test is complete so we can read out the hits
 		[commandBuffer waitUntilCompleted];
-		
-		//Now Read Out hit data
-		//NSLog(@"Hit isHit = %i",hit->isHit);
-		//NSLog(@"Hit hitDistance = %f",hit->hitPointX);
-		//NSLog(@"Hit hitNodeId = %u",hit->hitNodeId);
 		
 		if(hit->isHit) {
             [_currentScene nodeSelected:hit->hitNodeId inScene: _uniformBuffer];
@@ -165,6 +142,33 @@
 	
 }
 
+- (NSInteger) shaderMaterialsCount:(SDFScene *) scene {
+    return scene->materialCount;
+}
+
+- (NSString *) generateShaderMaterials:(SDFScene *) scene {
+    
+    NSMutableString *mutableMaterialsList = [NSMutableString new];
+    
+    for(int i = 0; i < scene->materialCount; i++) {
+        
+        SDFMaterial mat = scene->materials[i];
+        
+        [mutableMaterialsList appendString: @"{\n"];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]]];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.specular[0], mat.specular[1], mat.specular[2]]];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.ambient[0], mat.ambient[1], mat.ambient[2]]];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.dome[0], mat.dome[1], mat.dome[2]]];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.bac[0], mat.bac[1], mat.bac[2]]];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f)\n",mat.frensel[0], mat.frensel[1], mat.frensel[2]]];
+        [mutableMaterialsList appendString: @"}"];
+        if(i < scene->materialCount-1) {
+            [mutableMaterialsList appendString: @",\n"];
+        }
+    }
+    
+    return mutableMaterialsList;
+}
 
 - (NSString *) generateStaticSDFFunc: (SDFScene *) scene {
 	
@@ -180,99 +184,99 @@
 	    switch (currNode.type) {
 	        case fPlaneType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fPlane(pos, vec3(%f,%f,%f),%f),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fPlane(pos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
 	        case fSphereType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fSphere(pos, %f),%i);\n",i,currNode.floats[9],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fSphere(pos, %f),%i,%f);\n",i,currNode.floats[9],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
 	        
 	        case fBoxCheapType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fBoxCheap(pos, vec3(%f,%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fBoxCheap(pos, vec3(%f,%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
             case fRoundBoxType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fRoundBox(pos, vec3(%f,%f,%f),%f),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fRoundBox(pos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
             break;
             case fTorusType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTorus(pos, %f,%f),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus(pos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fCapsuleType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCapsule(pos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCapsule(pos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fTriPrismType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTriPrism(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTriPrism(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fCylinderType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCylinder(pos, %f,%f),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCylinder(pos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
                 
             case fConeType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCone(pos, %f,%f),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCone(pos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fTorus82Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTorus82(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus82(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fTorus88Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fTorus88(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus88(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fCylinder6Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fCylinder6(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCylinder6(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fOctahedronType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fOctahedron(pos,%f),%i);\n",i,currNode.floats[9],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fOctahedron(pos,%f),%i,%f);\n",i,currNode.floats[9],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
             break;
             case fEllipsoidType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fEllipsoid(pos, vec3(%f,%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fEllipsoid(pos, vec3(%f,%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fHexagonIncircleType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fHexagonIncircle(pos, vec2(%f,%f)),%i);\n",i,currNode.floats[9],currNode.floats[10],i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fHexagonIncircle(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fBlobType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = vec2(fBlob(pos),%i);\n",i,i]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fBlob(pos),%i,%f);\n",i,i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
@@ -285,10 +289,10 @@
 	        case pSubtractionType:
 	        {
                 if ([ds size] == 2) {
-                    [mutableFuncBody appendString:[NSString stringWithFormat:@"res = pS(%@,%@,%i);\n",[ds pop], [ds pop], i]];
+                    [mutableFuncBody appendString:[NSString stringWithFormat:@"res = pS(%@,%@);\n",[ds pop], [ds pop]]];
                     [ds push:@"res"];
                 } else {
-                    [mutableFuncBody appendString:[NSString stringWithFormat:@"vec2 res%i = pS(%@,%@,%i);\n",i,[ds pop], [ds pop], i]];
+                    [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = pS(%@,%@);\n",i,[ds pop], [ds pop]]];
                     [ds push:[NSString stringWithFormat:@"res%i",i]];
                 }
 	        }
@@ -306,24 +310,23 @@
                 break;
 	        case pModPolarType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"cell = pModPolar(pos,%i,%i,%f);\n",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells = pModPolar(pos,%i,%i,%f);\n",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
 	            
 	        }
 	        break;
             case pMod3Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells3 = pMod3(pos,vec3(%f,%f,%f));\n",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells = pMod3(pos,vec3(%f,%f,%f));\n",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
             }
             break;
 	        case pModResetType:
 	        {
                 [mutableFuncBody appendString:@"pos = origPos;\n"];
-                [mutableFuncBody appendString:@"cell = 0;\n"];
+                [mutableFuncBody appendString:@"cells = vec3(0.0);\n"];
 	        }
 	        break;
 	        default:
 	        {
-	            //push(ds, vec2{10000000000.0,-1.0});
 	        }
 	    }
 	    
@@ -335,33 +338,49 @@
 #pragma SceneDelegate
     
     - (void)sceneDidUpdate:(Scene *)scene {
-
-        dispatch_async(_clientRequestQueue, ^{
-            @autoreleasepool {
-                 //Build a shader and compile it
-                 //Then push it back onto the client request queue to replace
-                 //the dynamic shader
-                 
-                 NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
-                
-                NSString *shader;
-                
-                @autoreleasepool {
-                  shader = [NSString stringWithFormat:_template, func];
-                }
-                NSError *error;
-                @autoreleasepool {
-                    id <MTLLibrary> library = [_device newLibraryWithSource:[NSString stringWithString:shader] options:nil error:&error];
-                    if(error == nil) {
-                        NSError *error;
-                 
-                        [ _sdf useKernel:[@"static_" stringByAppendingString:_currentScene.kernelName] fromLibrary:library uniformBuffer:_uniformBuffer error:&error];
-                    }
-                }
-            }
-            
+        
+        dispatch_async(_shaderJITQueue , ^{
+            [self compileAndPushShader: scene];
         });
     }
+
+- (void) compileAndPushShader:(Scene *)scene {
+
+    CFTimeInterval start = CACurrentMediaTime();
+    
+    NSInteger materialsCount = [self shaderMaterialsCount:_uniformBuffer];
+    NSString *materials = [self generateShaderMaterials:_uniformBuffer];
+    NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
+    NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
+            
+    NSError *error;
+    id <MTLLibrary> library = [_device newLibraryWithSource:[NSString stringWithString:source] options:nil error:&error];
+    if(error != nil) {
+        NSLog(@"library error = %@",error);
+    }
+    
+    id<MTLComputePipelineState> computePipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kComputeKernelName] error:&error];
+    
+    if (!computePipeline)
+    {
+        NSLog(@"Error occurred when building compute pipeline for function %@", kComputeKernelName);
+    }
+    
+    id<MTLComputePipelineState> hitPipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kHitTestKernelName] error:&error];
+    
+    if (!hitPipeline)
+    {
+        NSLog(@"Error occurred when building hit pipeline for function %@", kHitTestKernelName);
+    }
+    
+    NSLog (@"New shader compiled in %f seconds",CACurrentMediaTime()-start);
+    
+    dispatch_async(_clientRequestQueue , ^{
+        [_sdf updatePipeline:computePipeline hitPipeline:hitPipeline];
+    });
+
+}
+
 
 
 @end

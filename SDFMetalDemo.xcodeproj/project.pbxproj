@@ -19,7 +19,6 @@
 		463DA4021D15778E00BA7C31 /* MetalSceneMananger.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3FF1D15778E00BA7C31 /* MetalSceneMananger.m */; };
 		463DA4031D15778E00BA7C31 /* Scene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4011D15778E00BA7C31 /* Scene.m */; };
 		463DA4081D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4051D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m */; };
-		463DA4091D1577F400BA7C31 /* SignedDistanceBoundsShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4061D1577F400BA7C31 /* SignedDistanceBoundsShader.metal */; };
 		463DA40A1D1577F400BA7C31 /* spatial_photonics_types in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4071D1577F400BA7C31 /* spatial_photonics_types */; };
 		463DA40B1D15782800BA7C31 /* BlobDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F31D15776700BA7C31 /* BlobDemoScene.m */; };
 		463DA40C1D15782800BA7C31 /* PolarSpaceWarpingDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA3F51D15776700BA7C31 /* PolarSpaceWarpingDemoScene.m */; };
@@ -60,6 +59,7 @@
 		463DA4751D15DE3700BA7C31 /* static-sdf-template-metal-shader.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 463DA4121D1578DB00BA7C31 /* static-sdf-template-metal-shader.tpl */; };
 		463E30901D0D9CCD007A448A /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
 		463E30911D0F186F007A448A /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
+		463F83901D1BEF6A00268A45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4441D157D6300BA7C31 /* AppDelegate.m */; };
 		46963B8A1D13588A00051482 /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
 /* End PBXBuildFile section */
 
@@ -160,7 +160,6 @@
 		463DA4011D15778E00BA7C31 /* Scene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Scene.m; path = common/scene/Scene.m; sourceTree = "<group>"; };
 		463DA4041D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignedDistanceBoundsPerformanceShader.h; path = common/shaders/SignedDistanceBoundsPerformanceShader.h; sourceTree = "<group>"; };
 		463DA4051D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SignedDistanceBoundsPerformanceShader.m; path = common/shaders/SignedDistanceBoundsPerformanceShader.m; sourceTree = "<group>"; };
-		463DA4061D1577F400BA7C31 /* SignedDistanceBoundsShader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; name = SignedDistanceBoundsShader.metal; path = common/shaders/SignedDistanceBoundsShader.metal; sourceTree = "<group>"; };
 		463DA4071D1577F400BA7C31 /* spatial_photonics_types */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = spatial_photonics_types; path = common/shaders/spatial_photonics_types; sourceTree = "<group>"; };
 		463DA4121D1578DB00BA7C31 /* static-sdf-template-metal-shader.tpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "static-sdf-template-metal-shader.tpl"; path = "common/shaders/static-sdf-template-metal-shader.tpl"; sourceTree = "<group>"; };
 		463DA4151D157B8700BA7C31 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = iOS/AppDelegate.h; sourceTree = SOURCE_ROOT; };
@@ -462,7 +461,6 @@
 			children = (
 				463DA4041D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.h */,
 				463DA4051D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m */,
-				463DA4061D1577F400BA7C31 /* SignedDistanceBoundsShader.metal */,
 				463DA4071D1577F400BA7C31 /* spatial_photonics_types */,
 			);
 			name = ComputeShader;
@@ -829,7 +827,6 @@
 			files = (
 				463E30901D0D9CCD007A448A /* Stack.m in Sources */,
 				463DA4021D15778E00BA7C31 /* MetalSceneMananger.m in Sources */,
-				463DA4091D1577F400BA7C31 /* SignedDistanceBoundsShader.metal in Sources */,
 				463DA3FA1D15776700BA7C31 /* BlobDemoScene.m in Sources */,
 				463DA3FB1D15776700BA7C31 /* PolarSpaceWarpingDemoScene.m in Sources */,
 				463DA4081D1577F400BA7C31 /* SignedDistanceBoundsPerformanceShader.m in Sources */,
@@ -894,6 +891,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				463F83901D1BEF6A00268A45 /* AppDelegate.m in Sources */,
 				463DA4551D157F5700BA7C31 /* MTKView+ContentScaleFactor.m in Sources */,
 				463DA4541D157F3F00BA7C31 /* SDFMetalDemoViewController.m in Sources */,
 				463DA44E1D157E4B00BA7C31 /* main.m in Sources */,

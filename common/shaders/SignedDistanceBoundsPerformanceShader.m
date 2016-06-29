@@ -6,13 +6,14 @@
 
 #import "SignedDistanceBoundsPerformanceShader.h"
 
+//const NSString *kComputeKernelName = @"signed_distance_bounds";
+//const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
+
 @interface SignedDistanceBoundsPerformanceShader ()
 {
 	id<MTLDevice> _device;
 	id<MTLBuffer> _uniformBuffer;
-	id<MTLFunction> _computeFunction;
-	id<MTLFunction> _hitFunction;
-	id<MTLComputePipelineState> _pipeline;
+    id<MTLComputePipelineState> _computePipeline;
 	id<MTLComputePipelineState> _hitPipeline;
 	id<MTLSamplerState> _sampler;
 	float _destinationTextureWidth;
@@ -33,36 +34,14 @@
 	return self;
 }
 
-
-- (void) useKernel:(NSString * _Nonnull)kernelName fromLibrary:(id<MTLLibrary>) library uniformBuffer:(void *)uniformBuffer error:(__autoreleasing NSError ** _Nullable)error {
-   
-    NSLog(@"useKernel() called with kernelName = %@",kernelName);
-    _kernelName = kernelName;
-    
-    _computeFunction = [library newFunctionWithName:kernelName];
-    
-    _hitFunction = [library newFunctionWithName:[kernelName stringByAppendingString:@"_hit_test"]];
-
-    _pipeline = [_device newComputePipelineStateWithFunction:_computeFunction error:error];
-    
-    _hitPipeline = [_device newComputePipelineStateWithFunction:_hitFunction error:error];
-
-    [self uniformBuffer:uniformBuffer bufferSize:sizeof(struct SDFScene)];
-    
-    //[self uniformBuffer:uniformBuffer bufferSize:sizeof(struct SDFUniforms)];
-    
-    if (!_pipeline)
-    {
-        NSLog(@"Error occurred when building compute pipeline for function %@", kernelName);
-    }
+- (void) updatePipeline:(id<MTLComputePipelineState>) computePipeline hitPipeline:(id<MTLComputePipelineState>) hitPipeline {
+    _computePipeline = computePipeline;
+    _hitPipeline = hitPipeline;
 }
     
-    
 - (void) uniformBuffer:(const void *)buffer bufferSize:(NSInteger )size {
-    
     const unsigned int length_pagealigned = (size/4096 +1)*4096;
 	_uniformBuffer = [_device newBufferWithBytesNoCopy:buffer length:length_pagealigned options:MTLResourceCPUCacheModeDefaultCache deallocator:nil];
-
 }
     
 
@@ -71,7 +50,6 @@
 }
 
 - (void) encodeToCommandBuffer:(id<MTLCommandBuffer>)commandBuffer
-        sourceTexture:(id<MTLTexture>)sourceTexture
         destinationTexture:(id<MTLTexture>)destinationTexture {
 	// We choose a fixed thread per threadgroup count here out of convenience, but could possibly
 	// be more efficient by using a non-square threadgroup pattern like 32x16 or 16x32
@@ -91,12 +69,16 @@
 	
 	
 	id<MTLComputeCommandEncoder> commandEncoder = [commandBuffer computeCommandEncoder];
-	//[commandEncoder pushDebugGroup:@"Dispatch signed distance bounds kernel"];
-	[commandEncoder setComputePipelineState:_pipeline];
+#ifdef DEBUG
+	[commandEncoder pushDebugGroup:@"Dispatch signed distance bounds kernel"];
+#endif
+	[commandEncoder setComputePipelineState:_computePipeline];
 	[commandEncoder setTexture:destinationTexture atIndex:0];
 	[commandEncoder setBuffer:_uniformBuffer offset:0 atIndex:0];
 	[commandEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
-	//[commandEncoder popDebugGroup];
+#ifdef DEBUG
+	[commandEncoder popDebugGroup];
+#endif
 	[commandEncoder endEncoding];
 }
 
@@ -106,10 +88,10 @@
 	MTLSize threadsPerThreadgroup = MTLSizeMake(1, 1, 1);
 	MTLSize threadgroupsPerGrid = MTLSizeMake(1, 1, 1);
     
-    NSLog(@"touch.x = %u",touch.touchPointX);
-    NSLog(@"touch.y = %u",touch.touchPointY);
-    NSLog(@"touch.viewWidth = %f",touch.viewWidth);
-    NSLog(@"touch.viewHeight = %f",touch.viewHeight);
+    //NSLog(@"touch.x = %u",touch.touchPointX);
+    //NSLog(@"touch.y = %u",touch.touchPointY);
+    //NSLog(@"touch.viewWidth = %f",touch.viewWidth);
+    //NSLog(@"touch.viewHeight = %f",touch.viewHeight);
     
 	
 	id<MTLBuffer> _touchesBuffer = [_device newBufferWithBytes:&touch length:sizeof(SDFTouch) options:MTLResourceCPUCacheModeDefaultCache];
@@ -119,13 +101,17 @@
 	id<MTLBuffer> _hitsBuffer = [_device newBufferWithBytesNoCopy:hit length:length_pagealigned options:MTLResourceCPUCacheModeDefaultCache deallocator:nil];
 	
 	id<MTLComputeCommandEncoder> commandEncoder = [commandBuffer computeCommandEncoder];
-	//[commandEncoder pushDebugGroup:@"Dispatch signed distance bounds hit test kernel"];
+#ifdef DEBUG
+	[commandEncoder pushDebugGroup:@"Dispatch signed distance bounds hit test kernel"];
+#endif
 	[commandEncoder setComputePipelineState:_hitPipeline];
 	[commandEncoder setBuffer:_uniformBuffer offset:0 atIndex:0];
 	[commandEncoder setBuffer:_touchesBuffer offset:0 atIndex:1];
 	[commandEncoder setBuffer:_hitsBuffer offset:0 atIndex:2];
 	[commandEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
-	//[commandEncoder popDebugGroup];
+#ifdef DEBUG
+	[commandEncoder popDebugGroup];
+#endif
 	[commandEncoder endEncoding];
 }
 
