@@ -18,6 +18,7 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 {
 	dispatch_queue_t _clientRequestQueue;
 	dispatch_queue_t _shaderJITQueue;
+    dispatch_queue_t _computePipelineCreateQueue;
 	id<MTLDevice> _device;
 	id<MTLCommandQueue> _metalCommandQueue;
 	SignedDistanceBoundsPerformanceShader *_sdf;
@@ -34,6 +35,7 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 		_device = device;
 		_clientRequestQueue = dispatch_queue_create("vo.co.sp.client.request", DISPATCH_QUEUE_SERIAL);
 		_shaderJITQueue = dispatch_queue_create("vo.co.sp.shader.jit", DISPATCH_QUEUE_SERIAL);
+        _computePipelineCreateQueue = dispatch_queue_create("vo.co.sp.cpc", DISPATCH_QUEUE_CONCURRENT);
 		
 		[self setupMetal];
 		
@@ -352,32 +354,46 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
     NSString *materials = [self generateShaderMaterials:_uniformBuffer];
     NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
     NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
-            
+    
     NSError *error;
     id <MTLLibrary> library = [_device newLibraryWithSource:[NSString stringWithString:source] options:nil error:&error];
     if(error != nil) {
         NSLog(@"library error = %@",error);
     }
     
-    id<MTLComputePipelineState> computePipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kComputeKernelName] error:&error];
+    dispatch_group_t group = dispatch_group_create();
     
-    if (!computePipeline)
-    {
-        NSLog(@"Error occurred when building compute pipeline for function %@", kComputeKernelName);
-    }
+    __block id<MTLComputePipelineState> computePipeline;
     
-    id<MTLComputePipelineState> hitPipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kHitTestKernelName] error:&error];
+    dispatch_group_async(group,_computePipelineCreateQueue, ^ {
+        NSError *error;
+        computePipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kComputeKernelName] error:&error];
+        if (!computePipeline)
+        {
+            NSLog(@"Error occurred when building compute pipeline for function %@", kComputeKernelName);
+        }
+    });
     
-    if (!hitPipeline)
-    {
-        NSLog(@"Error occurred when building hit pipeline for function %@", kHitTestKernelName);
-    }
+    __block id<MTLComputePipelineState> hitPipeline;
+    
+    dispatch_group_async(group,_computePipelineCreateQueue, ^ {
+        NSError *error;
+        hitPipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kHitTestKernelName] error:&error];
+        
+        if (!hitPipeline)
+        {
+            NSLog(@"Error occurred when building hit pipeline for function %@", kHitTestKernelName);
+        }
+    });
+
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+        dispatch_async(_clientRequestQueue , ^{
+            [_sdf updatePipeline:computePipeline hitPipeline:hitPipeline];
+        });
     
     NSLog (@"New shader compiled in %f seconds",CACurrentMediaTime()-start);
     
-    dispatch_async(_clientRequestQueue , ^{
-        [_sdf updatePipeline:computePipeline hitPipeline:hitPipeline];
-    });
+    
 
 }
 
