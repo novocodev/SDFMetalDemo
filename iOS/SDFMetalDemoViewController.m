@@ -38,8 +38,7 @@ static int const numFpsSamples = 16;
 
 - (void)viewDidLoad {
 	[super viewDidLoad];
-	
-	NSLog(@"viewDidLoad called");
+
 	self.metalView = (MTKView *)self.view;
 	
 	// Set the view to use the default device.
@@ -92,6 +91,7 @@ static int const numFpsSamples = 16;
 	self.metalView.framebufferOnly = false;
 	
 	_initialViewScaleFactor = self.metalView.contentScaleFactor;
+
 }
 
  

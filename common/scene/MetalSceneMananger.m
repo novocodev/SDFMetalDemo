@@ -82,7 +82,6 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 }
 
 - (void) renderToTexture:(id<MTLTexture>)texture inView:(MTKView *) view toDrawable: (id <MTLDrawable>)drawable {
-	
 	//Add to client request queue
 	dispatch_sync(_clientRequestQueue, ^{
         [_currentScene updateScene:_uniformBuffer atMediaTime:(CACurrentMediaTime() - _mediaStartTime)];
@@ -355,8 +354,11 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
     NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
     NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
     
+    MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
+    options.fastMathEnabled = YES;
+    
     NSError *error;
-    id <MTLLibrary> library = [_device newLibraryWithSource:[NSString stringWithString:source] options:nil error:&error];
+    id <MTLLibrary> library = [_device newLibraryWithSource:[NSString stringWithString:source] options:options error:&error];
     if(error != nil) {
         NSLog(@"library error = %@",error);
     }
@@ -392,12 +394,8 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
         });
     
     NSLog (@"New shader compiled in %f seconds",CACurrentMediaTime()-start);
-    
-    
 
 }
-
-
 
 @end
 
