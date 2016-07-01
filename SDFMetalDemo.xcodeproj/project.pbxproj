@@ -680,7 +680,6 @@
 				TargetAttributes = {
 					462BD8ED1CF5C14C004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = UD4567NPDW;
 						ProvisioningStyle = Manual;
 					};
 					462BD9061CF5C14D004D0AF7 = {
@@ -693,7 +692,6 @@
 					};
 					462BD9271CF5C164004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = UD4567NPDW;
 						ProvisioningStyle = Manual;
 					};
 					462BD93C1CF5C164004D0AF7 = {
@@ -706,7 +704,6 @@
 					};
 					462BD95B1CF5C17F004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
-						DevelopmentTeam = UD4567NPDW;
 						ProvisioningStyle = Manual;
 					};
 					462BD9701CF5C17F004D0AF7 = {
