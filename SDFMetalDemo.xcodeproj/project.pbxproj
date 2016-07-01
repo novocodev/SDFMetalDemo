@@ -681,6 +681,7 @@
 					462BD8ED1CF5C14C004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = UD4567NPDW;
+						ProvisioningStyle = Manual;
 					};
 					462BD9061CF5C14D004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
@@ -693,6 +694,7 @@
 					462BD9271CF5C164004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = UD4567NPDW;
+						ProvisioningStyle = Manual;
 					};
 					462BD93C1CF5C164004D0AF7 = {
 						CreatedOnToolsVersion = 7.3;
@@ -1080,6 +1082,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1091,7 +1094,7 @@
 				);
 				INFOPLIST_FILE = iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SDFMetalDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -1101,6 +1104,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1109,7 +1113,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = TARGET_IOS;
 				INFOPLIST_FILE = iOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-iOS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SDFMetalDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -1174,7 +1178,7 @@
 				);
 				INFOPLIST_FILE = tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SDFMetalDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
@@ -1194,7 +1198,7 @@
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "TARGET_IOS=1";
 				INFOPLIST_FILE = tvOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SDFMetalDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SDKROOT = appletvos;
@@ -1275,9 +1279,9 @@
 				INFOPLIST_FILE = OSX/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-OSX";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SDFMetalDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = UD4567NPDW/;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -1296,7 +1300,7 @@
 				INFOPLIST_FILE = OSX/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_BUNDLE_IDENTIFIER = "co.vo.voc-o-OSX";
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourcompany.SDFMetalDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
