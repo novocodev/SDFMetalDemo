@@ -23,7 +23,7 @@
 	scene->modelVersion = 1.0; //Model version to allow shaders to barf if they are not compatible
     
     // camera
-    vector_float3 origin = { -0.5+3.5*cos(0.0), 1.0, 0.5 + 3.5*sin(0.0) };
+    vector_float3 origin = { -0.5+1.5*cos(0.0), 0.5, 0.5 + 1.5*sin(0.0) };
 
     vector_float3 target = { 0.0, 0.0, 0.0 };
     
@@ -79,9 +79,9 @@
     
     struct SDFNode node0Mod3;
     node0Mod3.type = pMod3Type;
-    node0Mod3.floats[0] = 0.5; // repetitions
-    node0Mod3.floats[1] = 0.5; // repetitions
-    node0Mod3.floats[2] = 0.5; // repetitions
+    node0Mod3.floats[0] = 0.25; // repetitions
+    node0Mod3.floats[1] = 0.25; // repetitions
+    node0Mod3.floats[2] = 0.25; // repetitions
     scene->nodes[0] = node0Mod3;
     
     struct SDFNode node1ModOffset;
@@ -95,16 +95,16 @@
 	node0RedSphere.functionHash = fTriPrismType;
 	node0RedSphere.type = fSphereType;
 	node0RedSphere.materialId = 0;
-	node0RedSphere.floats[9] = 0.125; // radius
+	node0RedSphere.floats[9] = 0.0625; // radius
 	scene->nodes[2] = node0RedSphere;
 	
 	struct SDFNode node1GreenBoxCheap;
 	node1GreenBoxCheap.functionHash = fTriPrismType;
 	node1GreenBoxCheap.type = fBoxCheapType;
 	node1GreenBoxCheap.materialId = 1;
-	node1GreenBoxCheap.floats[9] = 0.105; // x dim
-	node1GreenBoxCheap.floats[10] = 0.105; // y dim
-	node1GreenBoxCheap.floats[11] = 0.105; // z dim
+	node1GreenBoxCheap.floats[9] = 0.053; // x dim
+	node1GreenBoxCheap.floats[10] = 0.053; // y dim
+	node1GreenBoxCheap.floats[11] = 0.053; // z dim
 	scene->nodes[3] = node1GreenBoxCheap;
 	
 	struct SDFNode node2Subtraction;
@@ -120,7 +120,7 @@
 	node5RedSphere.functionHash = fTriPrismType;
 	node5RedSphere.type = fSphereType;
 	node5RedSphere.materialId = 0;
-	node5RedSphere.floats[9] = 0.25; // radius
+	node5RedSphere.floats[9] = 0.125; // radius
 	scene->nodes[6] = node5RedSphere;
 	
 	struct SDFNode node7Union;
@@ -129,9 +129,9 @@
 	
 	struct SDFNode node8ModOffset;
 	node8ModOffset.type = pModOffsetType;
-	node8ModOffset.floats[0] = -1.0; // x-offset
-	node8ModOffset.floats[1] = -1.3; // y-offset
-	node8ModOffset.floats[2] = -1.0; // z-offset
+	node8ModOffset.floats[0] = -0.5; // x-offset
+	node8ModOffset.floats[1] = -0.65; // y-offset
+	node8ModOffset.floats[2] = -0.5; // z-offset
 	scene->nodes[8] = node8ModOffset;
 	
 	
@@ -139,7 +139,7 @@
 	node9GreenSphere.functionHash = fTriPrismType;
 	node9GreenSphere.type = fSphereType;
 	node9GreenSphere.materialId = 1;
-	node9GreenSphere.floats[9] = 0.15; // radius
+	node9GreenSphere.floats[9] = 0.075; // radius
 	scene->nodes[9] = node9GreenSphere;
 	
 	struct SDFNode node10Union;
@@ -150,7 +150,7 @@
 - (void) updateScene:(SDFScene *)scene atMediaTime:(float) mediaTime {
 
 	// camera
-	vector_float3 origin = { -0.5+3.5*cos(0.1*mediaTime), 1.0, 0.5 + 3.5*sin(0.1*mediaTime) };
+	vector_float3 origin = { -0.5+1.5*cos(0.1*mediaTime), 1.0, 0.5 + 1.5*sin(0.1*mediaTime) };
 	//vector_float3 origin = { 0.0, 0.0, 10.0 };
 	vector_float3 target = { 0.0, 0.0, 0.0 };
 	

@@ -903,8 +903,13 @@ vec3 pS( vec3 d1, vec3 d2)
         cells = cells;
 		return res;
 	}
-	
-	
+
+    half3 maph( half3 pos);
+    half3 maph( half3 pos)
+    {
+        return half3(map(vec3(pos)));
+    }
+
 	vec3 castRay( vec3 ro, vec3 rd);
 	vec3 castRay( vec3 ro, vec3 rd)
 	{
@@ -916,10 +921,10 @@ vec3 pS( vec3 d1, vec3 d2)
 		float m = -1.0;
         float o = -1.0;
 		int i = 0;
+        vec3 res = 0.0;
 		for(; i<maxIterations; i++ )
 		{
-			vec3 res = map( fma(rd,t,ro));
-            //if( res.x<precis || t>tmax ) {
+			res = map( fma(rd,t,ro));
             if( res.x<precis ) {
                 o = res.y;
                 m = res.z;
@@ -931,6 +936,7 @@ vec3 pS( vec3 d1, vec3 d2)
 		}
 		return vec3( t, o, m );
 	}
+
 /*
     vec2 castRayRelaxed( vec3 ro, vec3 rd);
     vec2 castRayRelaxed( vec3 ro, vec3 rd)
@@ -993,34 +999,39 @@ vec3 pS( vec3 d1, vec3 d2)
     }
 */
 
+    half softshadow( vec3 ro, vec3 rd, float mint, float tmax);
+    half softshadow( vec3 ro, vec3 rd, float mint, float tmax)
+    {
+        half3 roh = half3(ro);
+        half3 rdh = half3(rd);
+        half minth = half(mint);
+        half tmaxh = half(tmax);
 
-	float softshadow( vec3 ro, vec3 rd, float mint, float tmax);
-	float softshadow( vec3 ro, vec3 rd, float mint, float tmax)
-	{
-		float res = 1.0;
-		float t = mint;
-		for( int i=0; i<16; i++ )
-		{
-			float h = map( fma(rd,t,ro)).x;
-			res = min( res, 8.0*h/t );
-			t += clamp( h, 0.02, 0.10 );
-			if( h<0.001 || t>tmax ) break;
-		}
-		return clamp( res, 0.0, 1.0 );
-		
-	}
-	
-	vec3 calcNormal( vec3 pos);
-	vec3 calcNormal( vec3 pos)
-	{
-		vec3 eps = vec3( 0.001, 0.0, 0.0 );
-		vec3 nor = vec3(
-		        map(pos+eps.xyy).x - map(pos-eps.xyy).x,
-		        map(pos+eps.yxy).x - map(pos-eps.yxy).x,
-		        map(pos+eps.yyx).x - map(pos-eps.yyx).x );
-		return normalize(nor);
-	}
-	
+        half res = 1.0h;
+        half t = minth;
+        for( int i=0; i<16; i++ )
+        {
+            half h = maph( fma(rdh,t,roh)).x;
+            res = min( res, 8.0h*h/t );
+            t += clamp( h, 0.02h, 0.10h );
+            if( h<0.001h || t>tmaxh ) break;
+        }
+        return clamp( res, 0.0h, 1.0h );
+    }
+
+
+    vec3 calcNormal( vec3 pos);
+    vec3 calcNormal( vec3 pos)
+    {
+        half3 posh = half3(pos);
+        half3 eps = half3( 0.001h, 0.0h, 0.0h );
+        half3 nor = half3(
+            maph(posh+eps.xyy).x - maph(posh-eps.xyy).x,
+            maph(posh+eps.yxy).x - maph(posh-eps.yxy).x,
+            maph(posh+eps.yyx).x - maph(posh-eps.yyx).x );
+        return normalize(vec3(nor));
+    }
+
 /*
  * This calculates whether there is a reflection at a point
  * but it seems to be limited to objects 1.0 or less distance
@@ -1030,22 +1041,24 @@ vec3 pS( vec3 d1, vec3 d2)
  * These restrictions are probably for performance but it limits the
  * visual appearane of the scene, make this more generic.
  */
-	float calcAO( vec3 pos, vec3 nor);
-	float calcAO( vec3 pos, vec3 nor)
-	{
-		float occ = 0.0;
-		float sca = 1.0;
-		for( int i=0; i<5; i++ )
-		{
-			float hr = fma(0.03,float(i),0.01);
-			vec3 aopos =  fma(nor, hr, pos);
-			float dd = map( aopos).x;
-			occ += -(dd-hr)*sca;
-			sca *= 0.95;
-		}
-		return clamp( fma(-3.0,occ,1.0 ), 0.0, 1.0 );
-	}
-	
+    half calcAO( vec3 pos, vec3 nor);
+    half calcAO( vec3 pos, vec3 nor)
+    {
+        half3 posh = half3(pos);
+        half3 norh = half3(nor);
+        half occ = 0.0;
+        half sca = 1.0;
+        for( int i=0; i<5; i++ )
+        {
+            half hr = fma(0.03h,half(i),0.01h);
+            half3 aopos =  fma(norh, hr, posh);
+            half dd = maph( aopos).x;
+            occ += -(dd-hr)*sca;
+            sca *= 0.95;
+        }
+        return clamp( fma(-3.0h,occ,1.0h ), 0.0h, 1.0h );
+    }
+
 	vec3 render( vec3 ro, vec3 rd, constant SDFUniforms &scene);
 	vec3 render( vec3 ro, vec3 rd, constant SDFUniforms &scene)
 	{
@@ -1075,7 +1088,7 @@ vec3 pS( vec3 d1, vec3 d2)
             col = vec3(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
             
 //ambient occlusion
-			float occ = calcAO( pos, nor);
+			float occ = float(calcAO( pos, nor));
 			
 //Light direction
 			vec3 lig = normalize( vec3(-0.6, 0.7, -0.5) );

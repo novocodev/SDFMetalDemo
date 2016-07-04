@@ -9,6 +9,7 @@
 #import "PolarSpaceWarpingDemoScene.h"
 #import "BlobDemoScene.h"
 #import "PrimitivesDemoScene.h"
+#import "LinesDemoScene.h"
 
 
 #ifndef TARGET_IOS
@@ -57,6 +58,8 @@ static int const numFpsSamples = 16;
     [self performSelector:@selector(newScene:) withObject:[[BlobDemoScene alloc] init] afterDelay:20];
     
     [self performSelector:@selector(newScene:) withObject:[[PrimitivesDemoScene alloc] init] afterDelay:30];
+    
+    [self performSelector:@selector(newScene:) withObject:[[LinesDemoScene alloc] init] afterDelay:40];
 
 }
 

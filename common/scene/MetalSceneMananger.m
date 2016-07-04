@@ -183,6 +183,12 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 	    struct SDFNode currNode = scene->nodes[i];
 	    
 	    switch (currNode.type) {
+            case fLineSegmentType:
+            {
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCapsule(pos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i,currNode.materialId]];
+                [ds push:[NSString stringWithFormat:@"res%i",i]];
+            }
+            break;
 	        case fPlaneType:
 	        {
                 [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fPlane(pos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
