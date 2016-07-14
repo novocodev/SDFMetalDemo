@@ -61,6 +61,12 @@
 		463E30911D0F186F007A448A /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
 		463F83901D1BEF6A00268A45 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 463DA4441D157D6300BA7C31 /* AppDelegate.m */; };
 		46963B8A1D13588A00051482 /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = 463E308F1D0D9CCD007A448A /* Stack.m */; };
+		46F3F2B31D37D17800445725 /* MultitouchDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3F2AF1D37D17800445725 /* MultitouchDemoScene.m */; };
+		46F3F2B41D37D17800445725 /* LinesDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3F2B01D37D17800445725 /* LinesDemoScene.m */; };
+		46F3F2B51D37D1BE00445725 /* LinesDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3F2B01D37D17800445725 /* LinesDemoScene.m */; };
+		46F3F2B61D37D1BE00445725 /* MultitouchDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3F2AF1D37D17800445725 /* MultitouchDemoScene.m */; };
+		46F3F2B71D37D1EF00445725 /* LinesDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3F2B01D37D17800445725 /* LinesDemoScene.m */; };
+		46F3F2B81D37D1EF00445725 /* MultitouchDemoScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 46F3F2AF1D37D17800445725 /* MultitouchDemoScene.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,6 +207,10 @@
 		463DA4701D15DDC900BA7C31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = tvOS/Base.lproj/Main.storyboard; sourceTree = SOURCE_ROOT; };
 		463E308E1D0D9CCD007A448A /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
 		463E308F1D0D9CCD007A448A /* Stack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stack.m; sourceTree = "<group>"; };
+		46F3F2AF1D37D17800445725 /* MultitouchDemoScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MultitouchDemoScene.m; path = common/scenes/MultitouchDemoScene.m; sourceTree = "<group>"; };
+		46F3F2B01D37D17800445725 /* LinesDemoScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LinesDemoScene.m; path = common/scenes/LinesDemoScene.m; sourceTree = "<group>"; };
+		46F3F2B11D37D17800445725 /* MultitouchDemoScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultitouchDemoScene.h; path = common/scenes/MultitouchDemoScene.h; sourceTree = "<group>"; };
+		46F3F2B21D37D17800445725 /* LinesDemoScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LinesDemoScene.h; path = common/scenes/LinesDemoScene.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -484,6 +494,10 @@
 		462BD9AF1CF64907004D0AF7 /* scenes */ = {
 			isa = PBXGroup;
 			children = (
+				46F3F2B21D37D17800445725 /* LinesDemoScene.h */,
+				46F3F2B01D37D17800445725 /* LinesDemoScene.m */,
+				46F3F2B11D37D17800445725 /* MultitouchDemoScene.h */,
+				46F3F2AF1D37D17800445725 /* MultitouchDemoScene.m */,
 				463DA3F21D15776700BA7C31 /* BlobDemoScene.h */,
 				463DA3F31D15776700BA7C31 /* BlobDemoScene.m */,
 				463DA3F41D15776700BA7C31 /* PolarSpaceWarpingDemoScene.h */,
@@ -833,7 +847,9 @@
 				463DA3FD1D15776700BA7C31 /* ThreeDSpaceWarpingDemoScene.m in Sources */,
 				463DA44D1D157D8B00BA7C31 /* main.m in Sources */,
 				463DA3FC1D15776700BA7C31 /* PrimitivesDemoScene.m in Sources */,
+				46F3F2B31D37D17800445725 /* MultitouchDemoScene.m in Sources */,
 				463DA41A1D157B8700BA7C31 /* SDFMetalDemoViewController.m in Sources */,
+				46F3F2B41D37D17800445725 /* LinesDemoScene.m in Sources */,
 				463DA4031D15778E00BA7C31 /* Scene.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -858,6 +874,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46F3F2B51D37D1BE00445725 /* LinesDemoScene.m in Sources */,
+				46F3F2B61D37D1BE00445725 /* MultitouchDemoScene.m in Sources */,
 				463DA46D1D15DD9200BA7C31 /* SignedDistanceBoundsPerformanceShader.m in Sources */,
 				463DA46E1D15DD9200BA7C31 /* SDFMetalDemoViewController.m in Sources */,
 				463DA4671D15DD7B00BA7C31 /* BlobDemoScene.m in Sources */,
@@ -890,6 +908,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				46F3F2B71D37D1EF00445725 /* LinesDemoScene.m in Sources */,
+				46F3F2B81D37D1EF00445725 /* MultitouchDemoScene.m in Sources */,
 				463F83901D1BEF6A00268A45 /* AppDelegate.m in Sources */,
 				463DA4551D157F5700BA7C31 /* MTKView+ContentScaleFactor.m in Sources */,
 				463DA4541D157F3F00BA7C31 /* SDFMetalDemoViewController.m in Sources */,

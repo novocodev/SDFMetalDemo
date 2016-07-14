@@ -24,7 +24,7 @@
 }
 
 
-- (void) nodeSelected:(uint) nodeId inScene:(SDFScene *)scene {
+- (void) nodesSelected:(NSMutableArray <NSValue *> *)hits  inScene:(SDFScene *)scene {
 	[NSException raise:NSInternalInconsistencyException
 	 format:@"You must override %@ in a subclass", NSStringFromSelector(_cmd)];
 }

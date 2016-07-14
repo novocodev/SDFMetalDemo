@@ -43,7 +43,6 @@ typedef struct SDFMaterial {
 
 
 typedef struct SDFNode {
-    unsigned long functionHash;
     enum nodeType type;
     unsigned char flags;
     float materialId;
@@ -69,6 +68,31 @@ typedef struct SDFUniforms {
     vector_float3 rayOrigin;
 } SDFUniforms;
 
+
+typedef struct SDFTouch {
+    uint touchPointX;
+    uint touchPointY;
+} SDFTouch;
+
+typedef struct Touches {
+    float viewWidth;
+    float viewHeight;
+    SDFTouch touches[32];
+} Touches;
+
+typedef struct SDFHit {
+    bool  isHit;
+    float hitPointX;
+    float hitPointY;
+    float hitPointZ;
+    uint  hitNodeId;
+} SDFHit;
+
+typedef struct Hits {
+    SDFHit hits[32];
+} Hits;
+
+
 @protocol SceneDelegate;
 
 @interface Scene : NSObject
@@ -83,7 +107,7 @@ typedef struct SDFUniforms {
 - (void) setupScene: (SDFScene *)scene;
 - (void) updateScene: (SDFScene *) scene atMediaTime:(float)mediaTime;
 
-- (void) nodeSelected:(uint) nodeId inScene:(SDFScene *)scene;
+- (void) nodesSelected:(NSMutableArray <NSValue *> *)hits inScene:(SDFScene *)scene;
 
 - (matrix_float3x3) setupCamera: (vector_float3 )origin target: (vector_float3)target rotation:(float) rotation;
 @end

@@ -92,14 +92,12 @@
     scene->nodes[1] = node1ModOffset;
     
     struct SDFNode node0RedSphere;
-    node0RedSphere.functionHash = fTriPrismType;
     node0RedSphere.type = fSphereType;
     node0RedSphere.materialId = 0;
     node0RedSphere.floats[9] = 0.125; // radius
     scene->nodes[2] = node0RedSphere;
     
     struct SDFNode node1GreenBoxCheap;
-    node1GreenBoxCheap.functionHash = fTriPrismType;
     node1GreenBoxCheap.type = fBoxCheapType;
     node1GreenBoxCheap.materialId = 1;
     node1GreenBoxCheap.floats[9] = 0.105; // x dim
@@ -117,7 +115,6 @@
     scene->nodes[5] = node4ModReset;
     
     struct SDFNode node5RedSphere;
-    node5RedSphere.functionHash = fTriPrismType;
     node5RedSphere.type = fSphereType;
     node5RedSphere.materialId = 0;
     node5RedSphere.floats[9] = 0.25; // radius
@@ -136,7 +133,6 @@
     
     
     struct SDFNode node9GreenSphere;
-    node9GreenSphere.functionHash = fTriPrismType;
     node9GreenSphere.type = fSphereType;
     node9GreenSphere.materialId = 1;
     node9GreenSphere.floats[9] = 0.15; // radius
@@ -158,16 +154,23 @@
     scene->cameraTransform = camera;
     scene->rayOrigin = origin;
 }
+
+- (void) nodesSelected:(NSMutableArray <NSValue *> *)hits  inScene:(SDFScene *)scene {
     
-- (void) nodeSelected:(uint) nodeId inScene:(SDFScene *)scene {
-    int materialid = scene->nodes[nodeId].materialId;
-    
-    scene->materials[materialid].ambient[0] = 1.0;
-    scene->materials[materialid].ambient[1] = 0.0;
-    scene->materials[materialid].ambient[2] = 0.0;
+    for(int i=0; i<hits.count; i++) {
+        
+        SDFHit hitValue;
+        [hits[i] getValue:&hitValue];
+        int materialid = scene->nodes[hitValue.hitNodeId].materialId;
+        
+        scene->materials[materialid].ambient[0]= 1.0;
+        scene->materials[materialid].ambient[1] = 0.0;
+        scene->materials[materialid].ambient[2] = 0.0;
+    }
     
     [self callDelegate];
 }
+
 
     
     @end

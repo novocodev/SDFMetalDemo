@@ -13,6 +13,7 @@
 
 const NSString *kComputeKernelName = @"signed_distance_bounds";
 const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
+const int kMaxPointsCount = 32;
 
 @implementation MetalSceneManager
 {
@@ -103,42 +104,56 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 }
 
 
-- (void) hitTestWithPoint: (CGPoint) point inView:(MTKView *) view initialViewScale:(float) initialViewScale {
-
+- (void) hitTestWithPoints: (NSMutableArray <NSValue *> *)points inView:(MTKView *) view initialViewScale:(float) initialViewScale {
+    
 	if (!_currentScene.supportsPicking) {
 		return;
 	}
 	dispatch_async(_clientRequestQueue, ^{
 
-        SDFTouch touch;
+        Touches touches;
 
-        touch.touchPointX = point.x / view.frame.size.width * view.currentDrawable.texture.width;
-        touch.touchPointY = point.y / view.frame.size.height * view.currentDrawable.texture.height;
-        touch.viewWidth = view.currentDrawable.texture.width;
-        touch.viewHeight = view.currentDrawable.texture.height;
+        touches.viewWidth = view.currentDrawable.texture.width;
+        touches.viewHeight = view.currentDrawable.texture.height;
         
+        unsigned long pointsCount = points.count <= kMaxPointsCount ? points.count : kMaxPointsCount;
+        
+        for (int i=0; i<pointsCount; i++) {
+#ifdef TARGET_IOS
+            CGPoint point = points[i].CGPointValue;
+#else
+            CGPoint point = points[i].pointValue;
+#endif
+            touches.touches[i].touchPointX = point.x / view.frame.size.width * view.currentDrawable.texture.width;
+            touches.touches[i].touchPointY = point.y / view.frame.size.height * view.currentDrawable.texture.height;
+        }
 		// Create a new command buffer for each renderpass to the current drawable.
 		id<MTLCommandBuffer> commandBuffer = [_metalCommandQueue commandBuffer];
-		
-		struct SDFHit *hit;
-		
-		const unsigned int length_pagealigned = (sizeof(hit)/4096 +1)*4096;
-		
-		void *hbuffer = valloc(length_pagealigned);
-		
-		hit = hbuffer;
-		
-		[_sdf encodeToCommandBuffer:commandBuffer touches:touch hits: hit];
+        
+        struct Hits *hits;
+        
+        const unsigned int length_pagealigned = (sizeof(Hits)/4096 +1)*4096;
+        
+        void *hbuffer = valloc(length_pagealigned);
+        
+        hits = hbuffer;
+        
+        [_sdf encodeToCommandBuffer:commandBuffer touches:touches touchCount:pointsCount hits: hits];
 
 		[commandBuffer commit];
 		
 		//Block until the hit test is complete so we can read out the hits
 		[commandBuffer waitUntilCompleted];
-		
-		if(hit->isHit) {
-            [_currentScene nodeSelected:hit->hitNodeId inScene: _uniformBuffer];
-		}
-		
+        
+        NSMutableArray <NSValue *> *confirmedHits = [[NSMutableArray alloc] init];
+        
+        for (int i=0; i<pointsCount; i++) {
+            if(hits->hits[i].isHit) {
+                NSValue *value = [NSValue valueWithBytes:&hits->hits[i] objCType:@encode(SDFHit)];
+                [confirmedHits addObject:value];
+            }
+        }
+		[_currentScene nodesSelected:confirmedHits inScene: _uniformBuffer];
 	});
 	
 }
@@ -185,105 +200,105 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 	    switch (currNode.type) {
             case fLineSegmentType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCapsule(pos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCapsule(tempPos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
             break;
 	        case fPlaneType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fPlane(pos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fPlane(tempPos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
 	        case fSphereType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fSphere(pos, %f),%i,%f);\n",i,currNode.floats[9],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fSphere(tempPos, %f),%i,%f);\n",i,currNode.floats[9],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
 	        
 	        case fBoxCheapType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fBoxCheap(pos, vec3(%f,%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fBoxCheap(tempPos, vec3(%f,%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
 	        }
 	        break;
             case fRoundBoxType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fRoundBox(pos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fRoundBox(tempPos, vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
             break;
             case fTorusType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus(pos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus(tempPos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fCapsuleType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCapsule(pos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCapsule(tempPos, vec3(%f,%f,%f),vec3(%f,%f,%f),%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],currNode.floats[12],currNode.floats[13],currNode.floats[14],currNode.floats[15],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fTriPrismType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTriPrism(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTriPrism(tempPos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fCylinderType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCylinder(pos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCylinder(tempPos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
                 
             case fConeType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCone(pos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCone(tempPos, %f,%f),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fTorus82Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus82(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus82(tempPos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fTorus88Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus88(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fTorus88(tempPos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fCylinder6Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCylinder6(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fCylinder6(tempPos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fOctahedronType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fOctahedron(pos,%f),%i,%f);\n",i,currNode.floats[9],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fOctahedron(tempPos,%f),%i,%f);\n",i,currNode.floats[9],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
             break;
             case fEllipsoidType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fEllipsoid(pos, vec3(%f,%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fEllipsoid(tempPos, vec3(%f,%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],currNode.floats[11],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fHexagonIncircleType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fHexagonIncircle(pos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fHexagonIncircle(tempPos, vec2(%f,%f)),%i,%f);\n",i,currNode.floats[9],currNode.floats[10],i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
             case fBlobType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fBlob(pos),%i,%f);\n",i,i,currNode.materialId]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"vec3 res%i = vec3(fBlob(tempPos),%i,%f);\n",i,i,currNode.materialId]];
                 [ds push:[NSString stringWithFormat:@"res%i",i]];
             }
                 break;
@@ -306,29 +321,29 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
 	        break;
 	        case pModOffsetType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"pModOffset(pos, vec3(%f,%f,%f))\n;",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"pModOffset(tempPos, vec3(%f,%f,%f))\n;",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
 	        }
 	        break;
             case pModRotateType:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"pR(pos,%i,%i,%f)\n;",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"pR(tempPos,%i,%i,%f)\n;",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
                 //pR(thread vec3 &p, int axis1, int axis2, float a)
             }
                 break;
 	        case pModPolarType:
 	        {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells = pModPolar(pos,%i,%i,%f);\n",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells = pModPolar(tempPos,%i,%i,%f);\n",currNode.ints[0],currNode.ints[1],currNode.floats[0]]];
 	            
 	        }
 	        break;
             case pMod3Type:
             {
-                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells = pMod3(pos,vec3(%f,%f,%f));\n",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
+                [mutableFuncBody appendString:[NSString stringWithFormat:@"cells = pMod3(tempPos,vec3(%f,%f,%f));\n",currNode.floats[0],currNode.floats[1],currNode.floats[2]]];
             }
             break;
 	        case pModResetType:
 	        {
-                [mutableFuncBody appendString:@"pos = origPos;\n"];
+                [mutableFuncBody appendString:@"tempPos = pos;\n"];
                 [mutableFuncBody appendString:@"cells = vec3(0.0);\n"];
 	        }
 	        break;
@@ -358,6 +373,7 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
     NSInteger materialsCount = [self shaderMaterialsCount:_uniformBuffer];
     NSString *materials = [self generateShaderMaterials:_uniformBuffer];
     NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
+    
     NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
     
     MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
@@ -399,7 +415,7 @@ const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
             [_sdf updatePipeline:computePipeline hitPipeline:hitPipeline];
         });
     
-    NSLog (@"New shader compiled in %f seconds",CACurrentMediaTime()-start);
+    //NSLog (@"New shader compiled in %f seconds",CACurrentMediaTime()-start);
 
 }
 

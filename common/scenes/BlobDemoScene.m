@@ -111,13 +111,5 @@
     scene->rayOrigin = origin;
 }
 
-- (void) nodeSelected:(uint) nodeId inScene:(SDFScene *)scene {
-    int materialid = scene->nodes[nodeId].materialId;
-    
-    scene->materials[materialid].ambient[0]= 1.0;
-    scene->materials[materialid].ambient[1] = 0.0;
-    scene->materials[materialid].ambient[2] = 0.0;
-}
-
 
 @end

@@ -17,7 +17,7 @@
         
 - (void) setupScene: (Scene *)scene;
 
-- (void) hitTestWithPoint: (CGPoint) point inView:(MTKView *) view initialViewScale:(float) initialViewScale;
+- (void) hitTestWithPoints: (NSMutableArray <NSValue *> *)points inView:(MTKView *) view initialViewScale:(float) initialViewScale;
 
 @end
 

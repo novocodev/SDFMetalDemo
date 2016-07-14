@@ -83,22 +83,19 @@
 }
 
 - (void)encodeToCommandBuffer:(_Nonnull id<MTLCommandBuffer>)commandBuffer
-        touches:(SDFTouch) touch hits: (struct SDFHit *) hit {
+        touches:(Touches) touches touchCount: (unsigned long) touchCount hits: (Hits *) hits {
         
-	MTLSize threadsPerThreadgroup = MTLSizeMake(1, 1, 1);
+	MTLSize threadsPerThreadgroup = MTLSizeMake(touchCount, 1, 1);
 	MTLSize threadgroupsPerGrid = MTLSizeMake(1, 1, 1);
     
     //NSLog(@"touch.x = %u",touch.touchPointX);
     //NSLog(@"touch.y = %u",touch.touchPointY);
     //NSLog(@"touch.viewWidth = %f",touch.viewWidth);
     //NSLog(@"touch.viewHeight = %f",touch.viewHeight);
-    
 	
-	id<MTLBuffer> _touchesBuffer = [_device newBufferWithBytes:&touch length:sizeof(SDFTouch) options:MTLResourceCPUCacheModeDefaultCache];
+	const unsigned int length_pagealigned = (sizeof(Hits)/4096 +1)*4096;
 	
-	const unsigned int length_pagealigned = (sizeof(SDFHit)/4096 +1)*4096;
-	
-	id<MTLBuffer> _hitsBuffer = [_device newBufferWithBytesNoCopy:hit length:length_pagealigned options:MTLResourceCPUCacheModeDefaultCache deallocator:nil];
+	id<MTLBuffer> _hitsBuffer = [_device newBufferWithBytesNoCopy:hits length:length_pagealigned options:MTLResourceCPUCacheModeDefaultCache deallocator:nil];
 	
 	id<MTLComputeCommandEncoder> commandEncoder = [commandBuffer computeCommandEncoder];
 #ifdef DEBUG
@@ -106,7 +103,7 @@
 #endif
 	[commandEncoder setComputePipelineState:_hitPipeline];
 	[commandEncoder setBuffer:_uniformBuffer offset:0 atIndex:0];
-	[commandEncoder setBuffer:_touchesBuffer offset:0 atIndex:1];
+    [commandEncoder setBytes:&touches length:sizeof(Touches) atIndex:1];
 	[commandEncoder setBuffer:_hitsBuffer offset:0 atIndex:2];
 	[commandEncoder dispatchThreadgroups:threadgroupsPerGrid threadsPerThreadgroup:threadsPerThreadgroup];
 #ifdef DEBUG

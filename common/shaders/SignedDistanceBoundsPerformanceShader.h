@@ -6,23 +6,6 @@
 #import <Foundation/Foundation.h>
 
 
-typedef struct SDFTouch {
-    uint touchPointX;
-    uint touchPointY;
-    float viewWidth;
-    float viewHeight;
-} SDFTouch;
-
-
-typedef struct SDFHit {
-    bool  isHit;
-    float hitPointX;
-    float hitPointY;
-    float hitPointZ;
-    uint  hitNodeId;
-} SDFHit;
-
-
 @interface SignedDistanceBoundsPerformanceShader : NSObject
 
 
@@ -39,7 +22,7 @@ typedef struct SDFHit {
            destinationTexture:(_Nonnull id<MTLTexture>)destinationTexture;
 
 - (void)encodeToCommandBuffer:(_Nonnull id<MTLCommandBuffer>)commandBuffer
-                      touches:(SDFTouch) point hits: (SDFHit *) hit;
+                      touches:(Touches) touches touchCount: (unsigned long) touchCount hits: (Hits *) hits;
 
 @property (nonatomic, assign) float deviceAttitudePitch;
 @property (nonatomic, assign) float deviceAttitudeRoll;

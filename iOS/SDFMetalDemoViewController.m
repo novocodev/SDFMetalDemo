@@ -10,6 +10,7 @@
 #import "BlobDemoScene.h"
 #import "PrimitivesDemoScene.h"
 #import "LinesDemoScene.h"
+#import "MultitouchDemoScene.h"
 
 
 #ifndef TARGET_IOS
@@ -52,7 +53,7 @@ static int const numFpsSamples = 16;
 	
 	Scene *launchScene = [[ThreeDSpaceWarpingDemoScene alloc] init];
 	[self newScene: launchScene];
-    
+
     [self performSelector:@selector(newScene:) withObject:[[PolarSpaceWarpingDemoScene alloc] init] afterDelay:10];
     
     [self performSelector:@selector(newScene:) withObject:[[BlobDemoScene alloc] init] afterDelay:20];
@@ -60,6 +61,8 @@ static int const numFpsSamples = 16;
     [self performSelector:@selector(newScene:) withObject:[[PrimitivesDemoScene alloc] init] afterDelay:30];
     
     [self performSelector:@selector(newScene:) withObject:[[LinesDemoScene alloc] init] afterDelay:40];
+    
+    [self performSelector:@selector(newScene:) withObject:[[MultitouchDemoScene alloc] init] afterDelay:50];
 
 }
 
@@ -144,17 +147,19 @@ static int const numFpsSamples = 16;
 #ifdef TARGET_IOS
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 	NSSet <UITouch *> * allTouches = [event allTouches];
-	//NSLog(@"touchesBegan() called with %lu touches",(unsigned long)allTouches.count);
-	
-	UITouch * t = [allTouches anyObject];
-	if (t != nil) {
-		CGPoint touchPoint = [t locationInView:self.metalView];
-		
-        [_sceneManager hitTestWithPoint: touchPoint inView: self.metalView initialViewScale: _initialViewScaleFactor];
-	}
+    
+    int pointCount = (int)allTouches.count;
+
+    NSMutableArray <NSValue *> *touchPoints = [[NSMutableArray alloc] initWithCapacity:pointCount];
+
+    for(UITouch *t in allTouches) {
+        [touchPoints addObject: [NSValue valueWithCGPoint:[t locationInView:self.metalView]]];
+    }
+    
+    [_sceneManager hitTestWithPoints: touchPoints inView: self.metalView initialViewScale: _initialViewScaleFactor];
 }
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	NSSet <UITouch *> * allTouches = [event allTouches];
+	//NSSet <UITouch *> * allTouches = [event allTouches];
 	//NSLog(@"touchesMoved() called with %lu touches",(unsigned long)allTouches.count);
 }
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -171,7 +176,9 @@ static int const numFpsSamples = 16;
     {
         CGPoint touchPoint = [theEvent locationInWindow];
         touchPoint.y = [[[theEvent window] contentView] frame].size.height - touchPoint.y;
-        [_sceneManager hitTestWithPoint: touchPoint inView:self.metalView initialViewScale: _initialViewScaleFactor];
+        NSMutableArray <NSValue *> *touchPoints = [[NSMutableArray alloc] initWithCapacity:1];
+        [touchPoints addObject: [NSValue valueWithPoint:touchPoint]];
+        [_sceneManager hitTestWithPoints: touchPoints inView:self.metalView initialViewScale: _initialViewScaleFactor];
     }
     
     - (void)mouseExited:(NSEvent *)theEvent
