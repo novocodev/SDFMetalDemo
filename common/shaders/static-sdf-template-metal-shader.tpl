@@ -320,12 +320,12 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
 	}
 
     struct SDFMaterial {
-        vec3 diffuse;
-        vec3 specular;
-        vec3 ambient;
-        vec3 dome;
-        vec3 bac;
-        vec3 frensel;
+        vector_float3 ambient;
+        vector_float3 diffuse;
+        vector_float3 specular;
+        vector_float3 reflect;
+        vector_float3 bac;
+        vector_float3 frensel;
     };
 
     struct SDFUniforms {
@@ -390,6 +390,7 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
 		return vec3( t, o, m );
 	}
 
+
     half softshadow( thread vec3 const &ro, thread vec3 const &rd, thread float const &mint, thread float const &tmax);
     half softshadow( thread vec3 const &ro, thread vec3 const &rd, thread float const &mint, thread float const &tmax)
     {
@@ -407,9 +408,9 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
             t += clamp( h, 0.02h, 0.10h );
             if( h<0.001h || t>tmaxh ) break;
         }
-        return clamp( res, 0.0h, 1.0h );
-    }
 
+        return clamp( res/tmaxh, 0.0h, 1.0h );
+    }
 
     vec3 calcNormal( thread vec3 const &pos);
     vec3 calcNormal( thread vec3 const &pos)
@@ -442,45 +443,40 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
         return clamp( fma(-3.0h,occ,1.0h ), 0.0h, 1.0h );
     }
 
+
 	vec3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene);
 	vec3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene)
 	{
-		vec3 col = fma(rd.y,0.8,vec3(0.7, 0.6, 0.7));
+        vec3 pixcolour = fma(rd.y,0.8,vec3(0.7, 0.6, 0.7));
 		vec3 res = castRay(ro,rd);
 
 		if( res.y>-0.5 )
 		{
-		
 			float t = res.x;
             int m = res.z;
 			vec3 pos = fma(t,rd,ro);
 			vec3 nor = calcNormal( pos);
 			vec3 ref = reflect( rd, nor );
-            col = vec3(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
+            //col = vec3(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
 			float occ = float(calcAO( pos, nor));
-			vec3 lig = normalize( vec3(-0.6, 0.7, -0.5) );
-			float amb = clamp( fma(0.5,nor.y,0.5), 0.0, 1.0 );
-			float dif = clamp( dot( nor, lig ), 0.0, 1.0 );
-			float bac = clamp( dot( nor, normalize(vec3(-lig.x,0.0,-lig.z))), 0.0, 1.0 )*clamp( 1.0-pos.y,0.0,1.0);
-			float dom = smoothstep( -0.1, 0.1, ref.y );
-			float fre = pow( clamp(1.0+dot(nor,rd),0.0,1.0), 2.0 );
-			float spe = pow(clamp( dot( ref, lig ), 0.0, 1.0 ),16.0);
-			dif *= softshadow( pos, lig, 0.02, 2.5);
-			dom *= softshadow( pos, ref, 0.02, 2.5);
 
-            vec3 lin = dif*materials[m].diffuse;
-            lin += spe*materials[m].specular*dif;
-            lin += amb*materials[m].ambient*occ;
-            lin += dom*materials[m].dome*occ;
-            lin += bac*materials[m].bac*occ;
-            lin += fre*materials[m].frensel*occ;
+			vec3 lig = normalize( vec3(1.0, 1.0, 1.0) );
+            vec3 lAmb = vec3( 0.4, 0.4, 0.4 );
+            vec3 lDif = max(0.0,dot( nor, lig )) * vec3(0.6,0.6,0.6);
+            vec3 lSpe = pow(clamp( dot( ref, lig ), 0.0, 1.0 ),16.0) * vec3(0.8,0.8,0.8);
 
-			col = col*lin;
-			col = mix( col, vec3(0.8,0.9,1.0), 1.0-exp( -0.002*t*t ) );
+            pixcolour = lAmb * materials[m].ambient;
+            pixcolour += lDif * materials[m].diffuse * softshadow( pos, lig, 0.02, 4.5) * occ;
+            pixcolour += lSpe * materials[m].specular;
+            pixcolour += materials[m].reflect * materials[int(res.z)].ambient * softshadow( pos, ref, 0.02, 4.5);
+
+			pixcolour = mix( pixcolour, vec3(0.8,0.9,1.0), 1.0-exp( -0.002*t*t ) );
 		}
-		return vec3( clamp(col,0.0,1.0) );
+		return vec3( clamp(pixcolour,0.0,1.0) );
 	}
-	
+
+
+
 	kernel void signed_distance_bounds(
 	        texture2d<float, access::write> outTexture [[texture(0)]],
             constant SDFUniforms const &uniforms [[buffer(0)]],
