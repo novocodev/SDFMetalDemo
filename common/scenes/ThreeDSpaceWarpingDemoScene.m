@@ -152,7 +152,6 @@
 - (void) nodesSelected:(NSMutableArray <NSValue *> *)hits  inScene:(SDFScene *)scene {
     
     for(int i=0; i<hits.count; i++) {
-        
         SDFHit hitValue;
         [hits[i] getValue:&hitValue];
         int materialid = scene->nodes[hitValue.hitNodeId].materialId;
@@ -164,8 +163,5 @@
     
     [self callDelegate];
 }
-
-
-
 
 @end

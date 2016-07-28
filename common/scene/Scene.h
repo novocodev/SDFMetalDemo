@@ -33,14 +33,13 @@ enum nodeType {
 };
 
 typedef struct SDFMaterial {
+    vector_float3 ambient;
     vector_float3 diffuse;
     vector_float3 specular;
-    vector_float3 ambient;
-    vector_float3 dome;
+    vector_float3 reflect;
     vector_float3 bac;
     vector_float3 frensel;
 } SDFMaterial;
-
 
 typedef struct SDFNode {
     enum nodeType type;

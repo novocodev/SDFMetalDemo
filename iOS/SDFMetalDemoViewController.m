@@ -49,7 +49,7 @@ static int const numFpsSamples = 16;
 	[self setupView];
 	
 	_sceneManager = [[MetalSceneManager alloc] initWithDevice:self.metalView.device];
-    
+
 	
 	Scene *launchScene = [[ThreeDSpaceWarpingDemoScene alloc] init];
 	[self newScene: launchScene];

@@ -171,10 +171,10 @@ const int kMaxPointsCount = 32;
         SDFMaterial mat = scene->materials[i];
         
         [mutableMaterialsList appendString: @"{\n"];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.ambient[0], mat.ambient[1], mat.ambient[2]]];
         [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.diffuse[0], mat.diffuse[1], mat.diffuse[2]]];
         [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.specular[0], mat.specular[1], mat.specular[2]]];
-        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.ambient[0], mat.ambient[1], mat.ambient[2]]];
-        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.dome[0], mat.dome[1], mat.dome[2]]];
+        [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.reflect[0], mat.reflect[1], mat.reflect[2]]];
         [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f),\n",mat.bac[0], mat.bac[1], mat.bac[2]]];
         [mutableMaterialsList appendString: [NSString stringWithFormat:@"vec3 (%f,%f,%f)\n",mat.frensel[0], mat.frensel[1], mat.frensel[2]]];
         [mutableMaterialsList appendString: @"}"];
@@ -373,7 +373,7 @@ const int kMaxPointsCount = 32;
     NSInteger materialsCount = [self shaderMaterialsCount:_uniformBuffer];
     NSString *materials = [self generateShaderMaterials:_uniformBuffer];
     NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
-    
+
     NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
     
     MTLCompileOptions *options = [[MTLCompileOptions alloc] init];

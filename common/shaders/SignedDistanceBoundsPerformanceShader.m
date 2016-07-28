@@ -88,7 +88,7 @@
 	MTLSize threadsPerThreadgroup = MTLSizeMake(touchCount, 1, 1);
 	MTLSize threadgroupsPerGrid = MTLSizeMake(1, 1, 1);
     
-    //NSLog(@"touch.x = %u",touch.touchPointX);
+    //NSLog(@"touch.x = %u",touches.touches[0].touchPointX);
     //NSLog(@"touch.y = %u",touch.touchPointY);
     //NSLog(@"touch.viewWidth = %f",touch.viewWidth);
     //NSLog(@"touch.viewHeight = %f",touch.viewHeight);
