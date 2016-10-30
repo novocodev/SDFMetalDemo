@@ -12,7 +12,7 @@ namespace staticshader {
 	
 	typedef float2x2 mat2;
 	typedef float3x3 mat3;
-	typedef float4x4 mat4;
+	typedef float4x4 mat4x4;
 
 #define TAU (2*M_PI_F)
 #define PHI 1.618033988749894848204586834
@@ -318,15 +318,34 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
 		float d2 = max( sqrt( dot(p.xz,p.xz)*(1.0-si*si)) + q*si - r2, q );
 		return length(max(vec2(d1,d2),0.0)) + min(max(d1,d2), 0.);
 	}
-
+/*
     struct SDFMaterial {
-        vector_float3 ambient;
-        vector_float3 diffuse;
-        vector_float3 specular;
-        vector_float3 reflect;
-        vector_float3 bac;
-        vector_float3 frensel;
+        float3 ambient;
+        float3 diffuse;
+        float3 specular;
+        float3 reflect;
+        float3 bac;
+        float3 frensel;
     };
+*/
+struct SDFMaterial {
+half3 ambient;
+half3 diffuse;
+half3 specular;
+half3 reflect;
+half3 bac;
+half3 frensel;
+};
+
+struct SDFMaterialFloat {
+float3 ambient;
+float3 diffuse;
+float3 specular;
+float3 reflect;
+float3 bac;
+float3 frensel;
+};
+
 
     struct SDFUniforms {
         float modelVersion;
@@ -339,9 +358,82 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
     constant const float kTmax = 100.0;
     constant const float kPrecis = 0.000001;
 
-    constant SDFMaterial materials[%i] = {
+
+    constant  half3 mat0ambient   [[function_constant(0)]];
+    constant  half3 mat0diffuse   [[function_constant(1)]];
+    constant  half3 mat0specular  [[function_constant(2)]];
+    constant  half3 mat0reflect   [[function_constant(3)]];
+    constant  half3 mat0bac       [[function_constant(4)]];
+    constant  half3 mat0frensel   [[function_constant(5)]];
+
+    constant  half3 mat1ambient   [[function_constant(6)]];
+    constant  half3 mat1diffuse   [[function_constant(7)]];
+    constant  half3 mat1specular  [[function_constant(8)]];
+    constant  half3 mat1reflect   [[function_constant(9)]];
+    constant  half3 mat1bac       [[function_constant(10)]];
+    constant  half3 mat1frensel   [[function_constant(11)]];
+
+    constant  half3 mat2ambient   [[function_constant(12)]];
+    constant  half3 mat2diffuse   [[function_constant(13)]];
+    constant  half3 mat2specular  [[function_constant(14)]];
+    constant  half3 mat2reflect   [[function_constant(15)]];
+    constant  half3 mat2bac       [[function_constant(16)]];
+    constant  half3 mat2frensel   [[function_constant(17)]];
+
+    constant  half3 mat3ambient   [[function_constant(18)]];
+    constant  half3 mat3diffuse   [[function_constant(19)]];
+    constant  half3 mat3specular  [[function_constant(20)]];
+    constant  half3 mat3reflect   [[function_constant(21)]];
+    constant  half3 mat3bac       [[function_constant(22)]];
+    constant  half3 mat3frensel   [[function_constant(23)]];
+
+/*
+constant const SDFMaterial materialRed = {
+mat0ambient,
+mat0diffuse,
+mat0specular,
+mat0reflect,
+mat0bac,
+mat0frensel
+};
+
+constant const SDFMaterial materialGreen = {
+mat1ambient,
+mat1diffuse,
+mat1specular,
+mat1reflect,
+mat1bac,
+mat1frensel
+};
+
+constant const SDFMaterial materialBlue = {
+mat2ambient,
+mat2diffuse,
+mat2specular,
+mat2reflect,
+mat2bac,
+mat2frensel
+};
+
+constant const SDFMaterial materialYellow = {
+mat3ambient,
+mat3diffuse,
+mat3specular,
+mat3reflect,
+mat3bac,
+mat3frensel
+};
+
+
+    constant float3 materials2[1] = {
+        mat0ambient
+    };
+*/
+
+    constant const SDFMaterialFloat materials[%i] = {
         %@
     };
+
 
     void pModOffset( thread vec3 &p, vec3 offset);
     void pModOffset( thread vec3 &p, vec3 offset) {
@@ -444,15 +536,50 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
     }
 
 
-	vec3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene);
-	vec3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene)
+	half3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene);
+	half3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene)
 	{
-        vec3 pixcolour = fma(rd.y,0.8,vec3(0.7, 0.6, 0.7));
+        const SDFMaterial materials2[4] = {
+            {
+                mat0ambient,
+                mat0diffuse,
+                mat0specular,
+                mat0reflect,
+                mat0bac,
+                mat0frensel
+            },
+            {
+mat1ambient,
+mat1diffuse,
+mat1specular,
+mat1reflect,
+mat1bac,
+mat1frensel
+            },
+            {
+mat2ambient,
+mat2diffuse,
+mat2specular,
+mat2reflect,
+mat2bac,
+mat2frensel
+            },
+            {
+mat3ambient,
+mat3diffuse,
+mat3specular,
+mat3reflect,
+mat3bac,
+mat3frensel
+            }
+        };
+
+        half3 pixcolour = fma(rd.y,0.8,half3(0.7, 0.6, 0.7));
 		vec3 res = castRay(ro,rd);
 
 		if( res.y>-0.5 )
 		{
-			float t = res.x;
+			half t = res.x;
             int m = res.z;
 			vec3 pos = fma(t,rd,ro);
 			vec3 nor = calcNormal( pos);
@@ -460,19 +587,32 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
             //col = vec3(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
 			float occ = float(calcAO( pos, nor));
 
-			vec3 lig = normalize( vec3(1.0, 1.0, 1.0) );
-            vec3 lAmb = vec3( 0.4, 0.4, 0.4 );
-            vec3 lDif = max(0.0,dot( nor, lig )) * vec3(0.6,0.6,0.6);
-            vec3 lSpe = pow(clamp( dot( ref, lig ), 0.0, 1.0 ),16.0) * vec3(0.8,0.8,0.8);
+			half3 lig = normalize( half3(1.0, 1.0, 1.0) );
+            half3 lAmb = half3( 0.4, 0.4, 0.4 );
+            half3 lDif = max(0.0h,dot( half3(nor.x,nor.y,nor.z), lig )) * half3(0.6,0.6,0.6);
+            half3 lSpe = pow(clamp( dot( half3(ref.x,ref.y,ref.z), lig ), 0.0h, 1.0h ),16.0h) * half3(0.8,0.8,0.8);
 
-            pixcolour = lAmb * materials[m].ambient;
-            pixcolour += lDif * materials[m].diffuse * softshadow( pos, lig, 0.02, 4.5) * occ;
-            pixcolour += lSpe * materials[m].specular;
-            pixcolour += materials[m].reflect * materials[int(res.z)].ambient * softshadow( pos, ref, 0.02, 4.5);
+            //pixcolour = lAmb * materials[m].ambient;
+            //pixcolour += lDif * materials[m].diffuse * softshadow( pos, lig, 0.02, 4.5) * occ;
+            //pixcolour += lSpe * materials[m].specular;
+            //pixcolour += materials[m].reflect * materials[int(res.z)].ambient * softshadow( pos, ref, 0.02, 4.5);
 
-			pixcolour = mix( pixcolour, vec3(0.8,0.9,1.0), 1.0-exp( -0.002*t*t ) );
+            pixcolour = lAmb * materials2[m].ambient;
+            //Softshadow is called with light source vactor to calculate shadow
+            pixcolour += lDif * materials2[m].diffuse * softshadow( pos, vec3(1.0, 1.0, 1.0), 0.02, 4.5) * occ;
+            pixcolour += lSpe * materials2[m].specular;
+            //Softshadow is called with reflected vactor to calculate reflection
+            pixcolour += materials2[m].reflect * materials2[int(ref.z)].ambient * softshadow( pos, ref, 0.02, 4.5);
+
+
+            //pixcolour = lAmb * mat0ambient;
+            //pixcolour += lDif * mat0diffuse * softshadow( pos, lig, 0.02, 4.5) * occ;
+            //pixcolour += lSpe * mat0specular;
+            //pixcolour += mat0reflect * materials[int(res.z)].ambient * softshadow( pos, ref, 0.02, 4.5);
+
+			pixcolour = mix( pixcolour, half3(0.8,0.9,1.0), 1.0h-exp( -0.002h*t*t ) );
 		}
-		return vec3( clamp(pixcolour,0.0,1.0) );
+		return half3( clamp(pixcolour,0.0h,1.0h) );
 	}
 
 
@@ -492,11 +632,11 @@ vec3 pS( thread vec3 const &d1, thread vec3 const &d2)
 		vec3 rd = uniforms.cameraTransform * normalize( vec3(p.xy,2.0) );
 
         vec3 ro = uniforms.rayOrigin;
-		vec3 col = render( ro, rd, uniforms);
+		half3 col = render( ro, rd, uniforms);
 		
-		col = pow( col, vec3(0.4545) );
+		col = pow( col, half3(0.4545) );
 		
-		vec4 fragColor=vec4( col, 1.0 );
+		vec4 fragColor=vec4( col.x, col.y, col.z, 1.0 );
 		
 		outTexture.write(fragColor, gid);
 	}

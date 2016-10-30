@@ -6,9 +6,6 @@
 
 #import "SignedDistanceBoundsPerformanceShader.h"
 
-//const NSString *kComputeKernelName = @"signed_distance_bounds";
-//const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
-
 @interface SignedDistanceBoundsPerformanceShader ()
 {
 	id<MTLDevice> _device;

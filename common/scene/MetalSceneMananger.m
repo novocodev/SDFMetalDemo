@@ -1,4 +1,4 @@
-//
+ //
 //  SceneMananger.m
 //  voĉo
 //  Copyright © 2016 Novoĉo. All rights reserved.
@@ -21,6 +21,7 @@ const int kMaxPointsCount = 32;
 	dispatch_queue_t _shaderJITQueue;
     dispatch_queue_t _computePipelineCreateQueue;
 	id<MTLDevice> _device;
+    id <MTLLibrary> _library;
 	id<MTLCommandQueue> _metalCommandQueue;
 	SignedDistanceBoundsPerformanceShader *_sdf;
 	Scene *_currentScene;
@@ -74,8 +75,8 @@ const int kMaxPointsCount = 32;
 		_currentScene = scene;
         _currentScene.delegate = self;
 		_mediaStartTime = CACurrentMediaTime();
-		
         [scene setupScene:_uniformBuffer];
+        
         dispatch_sync(_shaderJITQueue , ^{
             [self compileAndPushShader: scene];
         });
@@ -362,12 +363,93 @@ const int kMaxPointsCount = 32;
     - (void)sceneDidUpdate:(Scene *)scene {
         
         dispatch_async(_shaderJITQueue , ^{
-            [self compileAndPushShader: scene];
+            //[self compileAndPushShader: scene];
+            [self updateMetalFunctions];
         });
     }
 
+- (void) updateMetalFunctions {
+    
+
+    CFTimeInterval start = CACurrentMediaTime();
+    
+    const vector_float3 materials[24] = {
+        {1.00,0.00,0.00},
+        {0.50,0.00,000},
+        {1.00,1.00,1.00},
+        {1.00,1.00,1.00},
+        {0.075,0.075,0.075},
+        {0.40,0.40,0.40},
+        
+        {1.00,0.00,0.00},
+        {0.50,0.00,000},
+        {1.00,1.00,1.00},
+        {1.00,1.00,1.00},
+        {0.075,0.075,0.075},
+        {0.40,0.40,0.40},
+        
+        {1.00,0.00,0.00},
+        {0.50,0.00,000},
+        {1.00,1.00,1.00},
+        {1.00,1.00,1.00},
+        {0.075,0.075,0.075},
+        {0.40,0.40,0.40},
+        
+        {1.00,0.00,0.00},
+        {0.50,0.00,000},
+        {1.00,1.00,1.00},
+        {1.00,1.00,1.00},
+        {0.075,0.075,0.075},
+        {0.40,0.40,0.40},
+    };
+    
+    MTLFunctionConstantValues* constantValues = [MTLFunctionConstantValues new];
+    
+    NSRange range = NSMakeRange(0, 24);
+    
+    [constantValues setConstantValues:materials type:MTLDataTypeHalf3 withRange:range];
+    
+    dispatch_group_t group = dispatch_group_create();
+    
+    __block id<MTLComputePipelineState> computePipeline;
+    
+    dispatch_group_async(group,_computePipelineCreateQueue, ^ {
+        NSError *deviceError;
+        NSError *libraryError;
+                computePipeline = [_device newComputePipelineStateWithFunction:[_library newFunctionWithName:kComputeKernelName constantValues: constantValues error: &libraryError] error:&deviceError];
+        if (!computePipeline)
+        {
+            NSLog(@"Error occurred when building compute pipeline for function %@", kComputeKernelName);
+        }
+    });
+    
+    __block id<MTLComputePipelineState> hitPipeline;
+    
+    dispatch_group_async(group,_computePipelineCreateQueue, ^ {
+        NSError *deviceError;
+        NSError *libraryError;
+        
+        hitPipeline = [_device newComputePipelineStateWithFunction:[_library newFunctionWithName:kHitTestKernelName constantValues: constantValues error: &libraryError] error:&deviceError];
+        if (!hitPipeline)
+        {
+            NSLog(@"Error occurred when building hit pipeline for function %@", kHitTestKernelName);
+        }
+    });
+    
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    dispatch_async(_clientRequestQueue , ^{
+        [_sdf updatePipeline:computePipeline hitPipeline:hitPipeline];
+    });
+    
+    NSLog (@"New functions compiled in %f seconds",CACurrentMediaTime()-start);
+
+}
+
+
+
 - (void) compileAndPushShader:(Scene *)scene {
 
+    NSLog(@"Compile and Push shader called");
     CFTimeInterval start = CACurrentMediaTime();
     
     NSInteger materialsCount = [self shaderMaterialsCount:_uniformBuffer];
@@ -380,7 +462,7 @@ const int kMaxPointsCount = 32;
     options.fastMathEnabled = YES;
     
     NSError *error;
-    id <MTLLibrary> library = [_device newLibraryWithSource:[NSString stringWithString:source] options:options error:&error];
+    _library = [_device newLibraryWithSource:[NSString stringWithString:source] options:options error:&error];
     if(error != nil) {
         NSLog(@"library error = %@",error);
     }
@@ -390,8 +472,49 @@ const int kMaxPointsCount = 32;
     __block id<MTLComputePipelineState> computePipeline;
     
     dispatch_group_async(group,_computePipelineCreateQueue, ^ {
-        NSError *error;
-        computePipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kComputeKernelName] error:&error];
+        NSError *deviceError;
+        NSError *libraryError;
+
+        const vector_float3 materials[24] = {
+            {1.00,0.00,0.00},
+            {0.50,0.00,000},
+            {1.00,1.00,1.00},
+            {1.00,1.00,1.00},
+            {0.075,0.075,0.075},
+            {0.40,0.40,0.40},
+    
+            {0.00,1.00,0.00},
+            {0.00,0.90,0.00},
+            {1.00,1.00,1.00},
+            {0.70,0.70,0.70},
+            {0.25,0.25,0.25},
+            {1.00,1.00,1.00},
+        
+            {0.00,0.00,1.00},
+            {1.00,0.85,0.55},
+            {0.00,0.00,1.00},
+            {0.50,0.70,1.00},
+            {0.25,0.25,0.25},
+            {1.00,1.00,1.00},
+        
+            {1.00,1.00,0.00},
+            {1.00,0.85,0.55},
+            {1.00,1.00,0.00},
+            {0.50,0.70,1.00},
+            {0.25,0.25,0.25},
+            {1.00,1.00,1.00}
+        };
+        
+
+        MTLFunctionConstantValues* constantValues = [MTLFunctionConstantValues new];
+        
+        NSRange range = NSMakeRange(0, 24);
+        
+        [constantValues setConstantValues:materials type:MTLDataTypeHalf3 withRange:range];
+        
+        
+        computePipeline = [_device newComputePipelineStateWithFunction:[_library newFunctionWithName:kComputeKernelName constantValues: constantValues error: &libraryError] error:&deviceError];
+        
         if (!computePipeline)
         {
             NSLog(@"Error occurred when building compute pipeline for function %@", kComputeKernelName);
@@ -401,8 +524,47 @@ const int kMaxPointsCount = 32;
     __block id<MTLComputePipelineState> hitPipeline;
     
     dispatch_group_async(group,_computePipelineCreateQueue, ^ {
-        NSError *error;
-        hitPipeline = [_device newComputePipelineStateWithFunction:[library newFunctionWithName:kHitTestKernelName] error:&error];
+        NSError *deviceError;
+        NSError *libraryError;
+        
+        const vector_float3 materials[24] = {
+            {1.00,0.00,0.00},
+            {0.50,0.00,000},
+            {1.00,1.00,1.00},
+            {1.00,1.00,1.00},
+            {0.075,0.075,0.075},
+            {0.40,0.40,0.40},
+            
+            {0.00,1.00,0.00},
+            {0.00,0.90,0.00},
+            {1.00,1.00,1.00},
+            {0.70,0.70,0.70},
+            {0.25,0.25,0.25},
+            {1.00,1.00,1.00},
+            
+            {0.00,0.00,1.00},
+            {1.00,0.85,0.55},
+            {0.00,0.00,1.00},
+            {0.50,0.70,1.00},
+            {0.25,0.25,0.25},
+            {1.00,1.00,1.00},
+            
+            {1.00,1.00,0.00},
+            {1.00,0.85,0.55},
+            {1.00,1.00,0.00},
+            {0.50,0.70,1.00},
+            {0.25,0.25,0.25},
+            {1.00,1.00,1.00}
+        };
+        
+        MTLFunctionConstantValues* constantValues = [MTLFunctionConstantValues new];
+        
+        NSRange range = NSMakeRange(0, 24);
+        
+        [constantValues setConstantValues:materials type:MTLDataTypeHalf3 withRange:range];
+
+        
+        hitPipeline = [_device newComputePipelineStateWithFunction:[_library newFunctionWithName:kHitTestKernelName constantValues: constantValues error: &libraryError] error:&deviceError];
         
         if (!hitPipeline)
         {
@@ -414,8 +576,6 @@ const int kMaxPointsCount = 32;
         dispatch_async(_clientRequestQueue , ^{
             [_sdf updatePipeline:computePipeline hitPipeline:hitPipeline];
         });
-    
-    //NSLog (@"New shader compiled in %f seconds",CACurrentMediaTime()-start);
 
 }
 
