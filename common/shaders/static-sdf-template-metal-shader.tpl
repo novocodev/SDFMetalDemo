@@ -358,7 +358,6 @@ float3 frensel;
     constant const float kTmax = 100.0;
     constant const float kPrecis = 0.000001;
 
-
     constant  half3 mat0ambient   [[function_constant(0)]];
     constant  half3 mat0diffuse   [[function_constant(1)]];
     constant  half3 mat0specular  [[function_constant(2)]];
@@ -440,36 +439,111 @@ mat3frensel
         p -= offset;
     }
 
-	vec3 map( thread vec3 const &pos);
-	vec3 map( thread vec3 const &pos)
+	//vec3 map( thread vec3 const &pos);
+	//vec3 map( thread vec3 const &pos)
+    float3x3 map( thread vec3 const &pos);
+    float3x3 map( thread vec3 const &pos)
 	{
         vec3 tempPos = pos;
         vec3 res = vec3(0);
         vec3 cells = vec3(0);
+        vec3 eps = vec3( 0.001, 0.0, 0.0 );
+        vec3 lastHitNormal;
+        vec3 lastHitVector;
 
-        %@
+        cells = pMod3(tempPos,vec3(0.250000,0.250000,0.250000));
+        vec3 res1 = vec3(fSphere(tempPos, 0.062500),1,0.000000);
+
+        //If this is a surface hit then savw the surface normal
+        if (res1.x < kPrecis) {
+            lastHitVector = tempPos;
+            lastHitNormal = normalize(vec3(
+                fSphere((tempPos+eps.xyy), 0.062500)
+                - fSphere((tempPos-eps.xyy), 0.062500),
+                fSphere((tempPos+eps.yxy), 0.062500)
+                - fSphere((tempPos-eps.yxy), 0.062500),
+                fSphere((tempPos+eps.yyx), 0.062500)
+                - fSphere((tempPos-eps.yyx), 0.062500)
+            ));
+        }
+        vec3 res2 = vec3(fBoxCheap(tempPos, vec3(0.053000,0.053000,0.053000)),2,1.000000);
+
+        //If this is a surface hit then savw the surface normal
+        if (res2.x < kPrecis) {
+            lastHitVector = tempPos;
+            lastHitNormal = normalize(vec3(
+                fBoxCheap((tempPos+eps.xyy), vec3(0.053000,0.053000,0.053000))
+                - fBoxCheap((tempPos-eps.xyy), vec3(0.053000,0.053000,0.053000)),
+                fBoxCheap((tempPos+eps.yxy), vec3(0.053000,0.053000,0.053000))
+                - fBoxCheap((tempPos-eps.yxy), vec3(0.053000,0.053000,0.053000)),
+                fBoxCheap((tempPos+eps.yyx), vec3(0.053000,0.053000,0.053000))
+                - fBoxCheap((tempPos-eps.yyx), vec3(0.053000,0.053000,0.053000))
+            ));
+        }
+
+        res = pS(res2,res1);
+
+        tempPos = pos;
+        cells = vec3(0.0);
+        vec3 res5 = vec3(fSphere(tempPos, 0.125000),5,0.000000);
+
+        //If this is a surface hit then savw the surface normal
+        if (res5.x < kPrecis) {
+            lastHitVector = tempPos;
+            lastHitNormal = normalize(vec3(
+                fSphere((tempPos+eps.xyy), 0.125000)
+                - fSphere((tempPos-eps.xyy), 0.125000),
+                fSphere((tempPos+eps.yxy), 0.125000)
+                - fSphere((tempPos-eps.yxy), 0.125000),
+                fSphere((tempPos+eps.yyx), 0.125000)
+                - fSphere((tempPos-eps.yyx), 0.125000)
+            ));
+        }
+
+        res = pU(res5,res);
+
+        pModOffset(tempPos, vec3(-0.500000,-0.650000,-0.500000));
+        vec3 res8 = vec3(fSphere(tempPos, 0.075000),8,1.000000);
+
+        //If this is a surface hit then savw the surface normal
+        if (res8.x < kPrecis) {
+            lastHitVector = tempPos;
+            lastHitNormal = normalize(vec3(
+                fSphere((tempPos+eps.xyy), 0.075000)
+                - fSphere((tempPos-eps.xyy), 0.075000),
+                fSphere((tempPos+eps.yxy), 0.075000)
+                - fSphere((tempPos-eps.yxy), 0.075000),
+                fSphere((tempPos+eps.yyx), 0.075000)
+                - fSphere((tempPos-eps.yyx), 0.075000)
+            ));
+        }
+
+        res = pU(res8,res);
 
         cells = cells;
-		return res;
+        return float3x3(res, lastHitNormal, lastHitVector);
 	}
 
     half3 maph( thread half3 const &pos);
     half3 maph( thread half3 const &pos)
     {
-        return half3(map(vec3(pos)));
+        return half3(map(vec3(pos))[0]);
     }
 
-	vec3 castRay( thread vec3 const &ro, thread vec3 const &rd);
-	vec3 castRay( thread vec3 const &ro, thread vec3 const &rd)
+
+	float3x3 castRay( thread vec3 const &ro, thread vec3 const &rd);
+	float3x3 castRay( thread vec3 const &ro, thread vec3 const &rd)
 	{
 		float t = kTmin;
 		float m = -1.0;
         float o = -1.0;
 		int i = 0;
         vec3 res = 0.0;
+        float3x3 composite;
 		for(; i<kMaxIterations; i++ )
 		{
-			res = map( fma(rd,t,ro));
+			composite = map( fma(rd,t,ro));
+            res = composite[0];
             if( res.x<kPrecis ) {
                 o = res.y;
                 m = res.z;
@@ -479,7 +553,7 @@ mat3frensel
 			t += res.x;
 
 		}
-		return vec3( t, o, m );
+		return float3x3(vec3( t, o, m ), composite[1], composite[2]);
 	}
 
 
@@ -504,19 +578,6 @@ mat3frensel
         return clamp( res/tmaxh, 0.0h, 1.0h );
     }
 
-    vec3 calcNormal( thread vec3 const &pos);
-    vec3 calcNormal( thread vec3 const &pos)
-    {
-        half3 posh = half3(pos);
-        half3 eps = half3( 0.001h, 0.0h, 0.0h );
-        half3 nor = half3(
-            maph(posh+eps.xyy).x - maph(posh-eps.xyy).x,
-            maph(posh+eps.yxy).x - maph(posh-eps.yxy).x,
-            maph(posh+eps.yyx).x - maph(posh-eps.yyx).x );
-        return normalize(vec3(nor));
-    }
-
-
     half calcAO( thread vec3 const &pos, thread vec3 const &nor);
     half calcAO( thread vec3 const &pos, thread vec3 const &nor)
     {
@@ -535,6 +596,10 @@ mat3frensel
         return clamp( fma(-3.0h,occ,1.0h ), 0.0h, 1.0h );
     }
 
+    half3 generateAmbientColour(thread vec3 const &normal, thread half3 const &textureParams);
+    half3 generateAmbientColour(thread vec3 const &normal, thread half3 const &textureParams) {
+        return half3(normalize(fabs(normal)));
+    }
 
 	half3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene);
 	half3 render(thread vec3 const &ro, thread vec3 const &rd, constant SDFUniforms &scene)
@@ -575,20 +640,23 @@ mat3frensel
         };
 
         half3 pixcolour = fma(rd.y,0.8,half3(0.7, 0.6, 0.7));
-		vec3 res = castRay(ro,rd);
-
+		float3x3 composite = castRay(ro,rd);
+        vec3 res = composite[0];
 		if( res.y>-0.5 )
 		{
 			half t = res.x;
             int m = res.z;
 			vec3 pos = fma(t,rd,ro);
-			vec3 nor = calcNormal( pos);
+			//vec3 nor = calcNormal( pos);
+            vec3 nor = composite[1];
+            vec3 hitVec = composite[2];
 			vec3 ref = reflect( rd, nor );
             //col = vec3(materials[m].ambient[0], materials[m].ambient[1], materials[m].ambient[2]);
 			float occ = float(calcAO( pos, nor));
 
 			half3 lig = normalize( half3(1.0, 1.0, 1.0) );
-            half3 lAmb = half3( 0.4, 0.4, 0.4 );
+            //half3 lAmb = half3( 0.4, 0.4, 0.4 );
+            half3 lAmb = half3( 1.0, 1.0, 1.0 );
             half3 lDif = max(0.0h,dot( half3(nor.x,nor.y,nor.z), lig )) * half3(0.6,0.6,0.6);
             half3 lSpe = pow(clamp( dot( half3(ref.x,ref.y,ref.z), lig ), 0.0h, 1.0h ),16.0h) * half3(0.8,0.8,0.8);
 
@@ -597,7 +665,8 @@ mat3frensel
             //pixcolour += lSpe * materials[m].specular;
             //pixcolour += materials[m].reflect * materials[int(res.z)].ambient * softshadow( pos, ref, 0.02, 4.5);
 
-            pixcolour = lAmb * materials2[m].ambient;
+            //pixcolour = lAmb * materials2[m].ambient;
+            pixcolour = lAmb * generateAmbientColour(hitVec,materials2[m].ambient);
             //Softshadow is called with light source vactor to calculate shadow
             pixcolour += lDif * materials2[m].diffuse * softshadow( pos, vec3(1.0, 1.0, 1.0), 0.02, 4.5) * occ;
             pixcolour += lSpe * materials2[m].specular;
@@ -681,8 +750,8 @@ mat3frensel
         vec3 rd = uniforms.cameraTransform * normalize( vec3(p.xy,2.0) );
 
         vec3 ro = uniforms.rayOrigin;
-        vec3 res = castRay(ro,rd);
-
+        float3x3 composite = castRay(ro,rd);
+        vec3 res = composite[0];
         if(res.y < -0.5) {
             hits.hits[touchIndex].isHit = false;
         } else {

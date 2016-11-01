@@ -456,7 +456,9 @@ const int kMaxPointsCount = 32;
     NSString *materials = [self generateShaderMaterials:_uniformBuffer];
     NSString *func = [self generateStaticSDFFunc:_uniformBuffer];
 
-    NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
+    //NSString *source = [NSString stringWithFormat:_template, materialsCount, materials, func];
+    NSString *source = [NSString stringWithFormat:_template, materialsCount, materials];
+    //NSLog(@"%@",func);
     
     MTLCompileOptions *options = [[MTLCompileOptions alloc] init];
     options.fastMathEnabled = YES;

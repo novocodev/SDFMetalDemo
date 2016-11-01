@@ -54,6 +54,7 @@ static int const numFpsSamples = 16;
 	Scene *launchScene = [[ThreeDSpaceWarpingDemoScene alloc] init];
 	[self newScene: launchScene];
 
+    /*
     [self performSelector:@selector(newScene:) withObject:[[PolarSpaceWarpingDemoScene alloc] init] afterDelay:10];
     
     [self performSelector:@selector(newScene:) withObject:[[BlobDemoScene alloc] init] afterDelay:20];
@@ -63,7 +64,7 @@ static int const numFpsSamples = 16;
     [self performSelector:@selector(newScene:) withObject:[[LinesDemoScene alloc] init] afterDelay:40];
     
     [self performSelector:@selector(newScene:) withObject:[[MultitouchDemoScene alloc] init] afterDelay:50];
-
+*/
 }
 
 - (Scene *) newScene: (Scene *)scene {
