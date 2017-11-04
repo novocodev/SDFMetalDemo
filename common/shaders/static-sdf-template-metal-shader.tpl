@@ -21,7 +21,7 @@ namespace staticshader {
 	float sgn(thread float const &x) {
 		return (x<0) ? -1 : 1;
 	}
-	
+	tp
 	vec2 sgn2(thread vec2 const &v);
 	vec2 sgn2(thread vec2 const &v) {
 		return vec2((v.x<0) ? -1 : 1, (v.y<0) ? -1 : 1);
