@@ -1,9 +1,7 @@
 
-#ifndef SceneManager_h
-#define SceneManager_h
+#pragma once
 
 @import simd;
-@import Metal;
 @import MetalKit;
 
 #import "Scene.h"
@@ -21,4 +19,3 @@
 
 @end
 
-#endif /* SceneManager_h */
