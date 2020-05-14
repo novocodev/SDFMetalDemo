@@ -11,8 +11,8 @@
 #import "MTKView+ContentScaleFactor.h"
 #endif
 
-const NSString *kComputeKernelName = @"signed_distance_bounds";
-const NSString *kHitTestKernelName = @"signed_distance_bounds_hit_test";
+const NSString *kComputeKernelName = @"staticshader::signed_distance_bounds";
+const NSString *kHitTestKernelName = @"staticshader::signed_distance_bounds_hit_test";
 const int kMaxPointsCount = 32;
 
 @implementation MetalSceneManager
