@@ -19,20 +19,20 @@
 }
 
 - (void) setupScene: (SDFScene *)scene {
-    
+
     scene->modelVersion = 1.0; //Model version to allow shaders to barf if they are not compatible
-    
+
     // camera
     vector_float3 origin = { -0.5+5.5*cos(0.0), 1.0, 0.5 + 5.5*sin(0.0) };
     vector_float3 target = { 0.0, 0.0, 0.0 };
-    
+
     matrix_float3x3 camera = [self setupCamera:origin target: target rotation:M_PI];
-    
+
     scene->cameraTransform = camera;
     scene->rayOrigin = origin;
-    
+
     scene->nodeCount =4;
-    
+
     struct SDFMaterial materialRed = {
         {1.00,0.00,0.00},
         {1.00,0.85,0.55},
@@ -73,9 +73,9 @@
     scene->materials[1] = materialGreen;
     scene->materials[2] = materialBlue;
     scene->materials[3] = materialYellow;
-    
+
     scene->materialCount = 4;
-    
+
     struct SDFNode node0RedOctohedron;
     node0RedOctohedron.type = fBlobType;
     node0RedOctohedron.materialId = 0;
@@ -87,16 +87,16 @@
     node1ModOffset.floats[1] = 0.0; // y-offset
     node1ModOffset.floats[2] = 0.0; // z-offset
     scene->nodes[1] = node1ModOffset;
-    
+
     struct SDFNode node2BlueOctohedron;
     node2BlueOctohedron.type = fBlobType;
     node2BlueOctohedron.materialId = 2;
     scene->nodes[2] = node2BlueOctohedron;
-    
+
     struct SDFNode node7Union;
     node7Union.type = pUnionType;
     scene->nodes[3] = node7Union;
-    
+
 }
 
 - (void) updateScene:(SDFScene *)scene atMediaTime:(float) mediaTime {
@@ -104,12 +104,13 @@
     vector_float3 origin = { -0.5+5.5*cos(0.1*mediaTime), 1.0, 0.5 + 5.5*sin(0.1*mediaTime) };
     //vector_float3 origin = { 0.0, 0.0, 10.0 };
     vector_float3 target = { 0.0, 0.0, 0.0 };
-    
+
     matrix_float3x3 camera = [self setupCamera:origin target: target rotation:M_PI];
-    
+
     scene->cameraTransform = camera;
     scene->rayOrigin = origin;
 }
 
 
 @end
+

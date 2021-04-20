@@ -3,6 +3,4 @@
 
 @interface BlobDemoScene : Scene
 
-- (instancetype) init;
-
 @end

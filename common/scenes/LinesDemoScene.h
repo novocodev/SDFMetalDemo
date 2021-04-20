@@ -2,6 +2,5 @@
 
 @interface LinesDemoScene : Scene
 
-- (instancetype) init;
 
 @end

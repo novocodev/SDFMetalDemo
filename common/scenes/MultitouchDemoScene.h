@@ -10,6 +10,4 @@
 
 @interface MultitouchDemoScene : Scene
 
-- (instancetype) init;
-
 @end

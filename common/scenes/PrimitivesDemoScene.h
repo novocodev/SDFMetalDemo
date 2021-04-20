@@ -3,6 +3,5 @@
 
 @interface PrimitivesDemoScene : Scene
 
-- (instancetype) init;
 
 @end

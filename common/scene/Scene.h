@@ -1,6 +1,5 @@
 
-#ifndef Scene_h
-#define Scene_h
+#pragma once
 
 @import simd;
 @import Metal;
@@ -108,12 +107,13 @@ typedef struct Hits {
 
 - (void) nodesSelected:(NSMutableArray <NSValue *> *)hits inScene:(SDFScene *)scene;
 
-- (matrix_float3x3) setupCamera: (vector_float3 )origin target: (vector_float3)target rotation:(float) rotation;
+- (matrix_float3x3) setupCamera: (vector_float3 )origin
+                         target: (vector_float3)target
+                       rotation:(float) rotation;
 @end
 
 
 @protocol SceneDelegate <NSObject>
-    - (void)sceneDidUpdate:(Scene *)scene;
+-(void)sceneDidUpdate:(Scene *)scene;
 @end
 
-#endif /* Scene_h */

@@ -9,55 +9,47 @@
 
 @implementation Stack
 
--(id)init
-{
+-(id)init {
     if ( (self = [super init]) ) {
         array = [[NSMutableArray alloc] init];
     }
-    
+
     return self;
 }
 
--(id)pop
-{
+-(id)pop {
     id object = [self peek];
     [array removeLastObject];
     return object;
 }
 
--(void)push:(id)element
-{
+-(void)push:(id)element {
     [array addObject:element];
 }
 
--(void)pushElementsFromArray:(NSArray*)arr
-{
+-(void)pushElementsFromArray:(NSArray*)arr {
     [array addObjectsFromArray:arr];
 }
 
--(id)peek
-{
+-(id)peek {
     return [array lastObject];
 }
 
--(NSInteger)size
-{
+-(NSInteger)size {
     return [array count];
 }
 
--(BOOL)isEmpty
-{
+-(BOOL)isEmpty {
     return [array count] == 0;
 }
 
--(void)clear
-{
+-(void)clear {
     [array removeAllObjects];
 }
 
-- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len;
-{
+- (NSUInteger)countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id __unsafe_unretained [])buffer count:(NSUInteger)len {
     return [array countByEnumeratingWithState:state objects:buffer count:len];
 }
 
 @end
+
